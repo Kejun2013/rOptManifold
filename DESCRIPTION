@@ -1,11 +1,11 @@
 Package: rOptManifold
 Type: Package
-Title: What the package does (short line)
+Title: This package optimizes function over variour matrix manifolds.
 Version: 1.0
 Date: 2014-02-13
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Author: Kejun He, Shiyuan He, Jianhua Huang, Yihui Xie
+Maintainer: Shiyuan He <shiyuan@stat.tamu.edu>
+Description: Matrix manifold includes Stiefel, Grassman and fixed-rank matrix manifold.
 License: What license is it under?
-Depends: Rcpp (>= 0.10.6), RcppArmadillo (>= 0.4.000),Matrix
+Depends: Rcpp (>= 0.10.6), RcppArmadillo (>= 0.4.000)
 LinkingTo: Rcpp, RcppArmadillo
