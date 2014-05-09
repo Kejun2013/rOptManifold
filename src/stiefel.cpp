@@ -1,19 +1,42 @@
 #include "stiefel.h"
 
-void stiefel::evalGradient(arma::mat gradF){
-  xi=gradF-Y*gradF.t()*Y;
+void stiefel::evalGradient(arma::mat gradF,std::string method){
+  
   //xi=xi;
-  eDescent=arma::dot(gradF,xi);
-  if(retraction==2){
-    retract_Q=arma::mat(n,2*p,arma::fill::zeros);
-    retract_R=retract_Q;
-    retract_Q(arma::span::all,arma::span(0,p-1))=gradF;
-    retract_Q(arma::span::all,arma::span(p,2*p-1))=Y;
-    retract_R(arma::span::all,arma::span(0,p-1))=Y;
-    retract_R(arma::span::all,arma::span(p,2*p-1))=-gradF;
+  if(method=="steepest"){
+    xi=gradF-Y*gradF.t()*Y;
+    eDescent=arma::dot(gradF,xi);
+    if(retraction==2){//prepare for Cayley rectraction in steepest descent algorithm
+      retract_Q=arma::mat(n,2*p,arma::fill::zeros);
+      retract_R=retract_Q;
+      retract_Q(arma::span::all,arma::span(0,p-1))=gradF;
+      retract_Q(arma::span::all,arma::span(p,2*p-1))=Y;
+      retract_R(arma::span::all,arma::span(0,p-1))=Y;
+      retract_R(arma::span::all,arma::span(p,2*p-1))=-gradF;
+    }
+  }else if(method=="trustRegion"){
+    //xi_normal=0.5*Y(gradF^T*Y+Y^T*gradF)
+    xi_normal=Y.t()*gradF;
+    xi_normal=0.5*Y*(xi_normal+xi_normal.t());
+    xi=gradF-xi_normal;
   }
 }
 
+
+//evaluate Hessian operator on Z
+//eucH is the ordinary Hessian matrix on Z in the ambient space
+//return <Z, Hessian*Z>_Y
+double stiefel::evalHessian(arma::mat eucH,arma::mat Z){
+  arma::mat YU,eucH_proj,Weingarten;
+  YU=Y.t()*eucH;
+  YU=YU+YU.t();
+  eucH_proj=eucH-0.5*Y*YU;
+  //Weigarten Map
+  YU=Z.t()*xi_normal;
+  Weingarten=-Z*Y.t()*xi_normal-0.5*Y*(YU+YU.t());
+  hessian_Z=eucH_proj+Weingarten;
+  return arma::dot(hessian_Z,Z);
+}
 
 
 arma::mat stiefel::retract(double stepSize){
@@ -34,8 +57,10 @@ arma::mat stiefel::retract(double stepSize){
 stiefel::stiefel(int n1, int p1, int r1, 
           Rcpp::NumericMatrix Y1,int retraction1):
           manifold(n1,p1,r1,Y1,retraction1)
-{    
-  
-}
+{}
 
+
+double arma::metric(const arma::mat &X1, const arma::mat &X2){
+  return arma::dot(X1,X2)
+}
 

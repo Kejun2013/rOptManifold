@@ -12,6 +12,8 @@ public:
   void evalGradient(arma::mat gradF);  //evaluate the steepest descent direction;
   //double evalObjective(); // evaluate objective
   arma::mat retract(double stepSize);
+  double evalHessian(arma::mat H,arma::mat Z);
+  double metric(const arma::mat &,const arma::mat &);
 };
 
 #endif

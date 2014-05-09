@@ -76,7 +76,7 @@ BEGIN_RCPP
           gradF=as< arma::mat>(grad(YList[0]));
         }
         //gradient on the stiefel manifold
-        manifoldY[k]->evalGradient(gradF);
+        manifoldY[k]->evalGradient(gradF,"steepest");
         stepsize=alpha/beta;
         eDescent=sigma/beta*(manifoldY[k]->get_eDescent());
         do{//c

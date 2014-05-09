@@ -1,6 +1,6 @@
 #include "grassmanQ.h"
 
-void grassmanQ::evalGradient(arma::mat gradF){
+void grassmanQ::evalGradient(arma::mat gradF, std::string s){
   arma::mat U_svd;
   xi=gradF-Y*Y.t()*gradF;
   eDescent=arma::dot(gradF,xi);
@@ -30,3 +30,13 @@ grassmanQ::grassmanQ(int n1, int p1, int r1,
   
 }
 
+
+
+double grassmanQ::evalHessian(arma::mat H,arma::mat Z){
+  // something here
+  return 0;
+}
+
+double grassmanQ::metric(arma::mat & X1,arma::mat &X2){
+  return 0;
+}
