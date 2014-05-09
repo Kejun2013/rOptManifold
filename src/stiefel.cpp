@@ -28,6 +28,7 @@ void stiefel::evalGradient(arma::mat gradF,std::string method){
 //return <Z, Hessian*Z>_Y
 double stiefel::evalHessian(arma::mat eucH,arma::mat Z){
   arma::mat YU,eucH_proj,Weingarten;
+  //project euclidian Hessian onto tangent space
   YU=Y.t()*eucH;
   YU=YU+YU.t();
   eucH_proj=eucH-0.5*Y*YU;
@@ -35,7 +36,8 @@ double stiefel::evalHessian(arma::mat eucH,arma::mat Z){
   YU=Z.t()*xi_normal;
   Weingarten=-Z*Y.t()*xi_normal-0.5*Y*(YU+YU.t());
   hessian_Z=eucH_proj+Weingarten;
-  return arma::dot(hessian_Z,Z);
+  Z_hessian_Z=arma::dot(hessian_Z,Z);
+  return Z_hessian_Z;
 }
 
 

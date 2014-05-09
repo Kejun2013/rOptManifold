@@ -23,7 +23,7 @@ setClass("manifold",
 
 
 # setGeneric("setGradient<-",function(object,value){standardGeneric("setGradient<-")})
-setGeneric("steepestDescent",function(object){standardGeneric("steepestDescent")})
+
 
 # 
 # setReplaceMethod(
@@ -122,6 +122,8 @@ setMethod("*",signature(e1="manifold",e2="manifold"),
                 retraction=retraction,mtype=mtype)
           })
 
+
+setGeneric("steepestDescent",function(object){standardGeneric("steepestDescent")})
 setMethod("steepestDescent","manifold",
           definition=function(object){
             retractMethod=rep(0,length(object@n))

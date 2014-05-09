@@ -134,6 +134,7 @@ BEGIN_RCPP
           d=-r+beta*d;
         }
         //end of inner loop:: subproblem
+        m_temp=manifoldY[k]->secondOrderApprox(objValue,eta);
         manifoldY[k]->set_Gradient(eta);
         YList[k]=manifoldY[k]->retract(1);
         if(prodK>1){
@@ -142,7 +143,7 @@ BEGIN_RCPP
           objValue_temp=as< double>(obej(YList[0]));
         }
         objDesc=objValue-objValue_temp;
-        mDesc=objValue-m_value;
+        mDesc=objValue-m_temp;
         rho=objDesc/mDesc;
         if(rho<0.25){
           Delta=0.25*Delta;

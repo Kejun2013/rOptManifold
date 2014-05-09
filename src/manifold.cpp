@@ -4,6 +4,11 @@ double manifold::get_eDescent(){
   return eDescent;
 }
 
+double secondOrderApprox(double m0,const arma::mat &eta){
+  m0=m0+0.5*Z_hessian_Z+metric(eta,xi);
+  return m0;
+}
+
 void manifold::acceptY(){
   Y=Yt;
 }

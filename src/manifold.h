@@ -19,8 +19,11 @@ protected:
   //xi and xi_normal: gradient in the tangent space and normal space
   //hessian_Z: hessian operator on Z, as a result of function evalHessian() below
   arma::mat xi,xi_normal,hessian_Z;  
-  int n,p,r,retraction;  //Y is a n-by-p matrix of rank r
-  double eDescent;//expected descent
+  //Y is a n-by-p matrix of rank r
+  //retraction is type of retraction expressed in 0,1,2,....
+  int n,p,r,retraction;  
+  double eDescent,Z_hessian_Z;//expected descent, and <Z, Hessian*Z>_Y
+  
 public:
   manifold(int n, int p, int r, NumericMatrix,int retraction1);
   
@@ -37,6 +40,10 @@ public:
   //metric on the tagent space at Y: <X1,X2>_Y
   virtual double metric(const arma::mat &X1,const arma::mat &X2)=0; 
   
+  
+  //vecotr transport
+  double secondOrderApprox(double ,const arma::mat &eta);
+  virtual void vectorTrans()=0;
   //commonly used function across all manifold types
   void acceptY();
   double get_eDescent();
