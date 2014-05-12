@@ -1,6 +1,6 @@
-#include "grassmanQ.h"
+#include "grassmannQ.h"
 
-void grassmanQ::evalGradient(arma::mat gradF, std::string s){
+void grassmannQ::evalGradient(arma::mat gradF, std::string method){
   arma::mat U_svd;
   xi=gradF-Y*Y.t()*gradF;
   eDescent=arma::dot(gradF,xi);
@@ -12,7 +12,7 @@ void grassmanQ::evalGradient(arma::mat gradF, std::string s){
 
 
 
-arma::mat grassmanQ::retract(double stepSize){
+arma::mat grassmannQ::retract(double stepSize, std::string method){
   arma::mat retract_middle;
   retract_middle=arma::mat(2*p,p,arma::fill::zeros);
   retract_middle(arma::span(0,p-1),arma::span::all)
@@ -23,20 +23,12 @@ arma::mat grassmanQ::retract(double stepSize){
   return Yt;
 }
 
-grassmanQ::grassmanQ(int n1, int p1, int r1, 
+grassmannQ::grassmannQ(int n1, int p1, int r1, 
           Rcpp::NumericMatrix Y1,int retraction1):
-          manifold(n1,p1,r1,Y1,retraction1)
-{    
-  
-}
+          manifold(n1,p1,r1,Y1,retraction1){}
 
 
-
-double grassmanQ::evalHessian(arma::mat H,arma::mat Z){
+double grassmannQ::evalHessian(const arma::mat &H, const arma::mat &Z){
   // something here
-  return 0;
-}
-
-double grassmanQ::metric(arma::mat & X1,arma::mat &X2){
   return 0;
 }

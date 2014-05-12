@@ -9,11 +9,10 @@ private:
   arma::mat retract_Q,retract_R;  //gradient in the tangent space
 public:
   stiefel(int, int, int, NumericMatrix,int);
-  void evalGradient(arma::mat gradF);  //evaluate the steepest descent direction;
+  void evalGradient(arma::mat gradF,std::string method);  //evaluate the steepest descent direction;
   //double evalObjective(); // evaluate objective
-  arma::mat retract(double stepSize);
-  double evalHessian(arma::mat H,arma::mat Z);
-  double metric(const arma::mat &,const arma::mat &);
+  arma::mat retract(double stepSize,std::string method);
+  double evalHessian(const arma::mat &H,const arma::mat &Z);
 };
 
 #endif

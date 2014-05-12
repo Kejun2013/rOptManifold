@@ -1,6 +1,6 @@
 //#include <omp.h>
 #include "stiefel.h"
-#include "grassmanQ.h"
+#include "grassmannQ.h"
 
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is objective function; f2 is gradient function
@@ -40,8 +40,8 @@ BEGIN_RCPP
         manifoldY.push_back(new stiefel(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }
-     else if(typeTemp=="grassmanQ"){
-       manifoldY.push_back(new grassmanQ(n[k],p[k],r[k],
+     else if(typeTemp=="grassmannQ"){
+       manifoldY.push_back(new grassmannQ(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
        
@@ -82,7 +82,7 @@ BEGIN_RCPP
         do{//c
           stepsize=stepsize*beta;
           eDescent=eDescent*beta;
-          YList[k]=manifoldY[k]->retract(stepsize);
+          YList[k]=manifoldY[k]->retract(stepsize,"steepest");
           if(prodK>1){
             objValue_temp=as< double>(obej(YList));
           }else{
@@ -108,71 +108,7 @@ END_RCPP
 
 ///////////////////////////////////////////////////////////////////////
 
-//double qr_stiefel(List &YList, vector<arma::mat> &Y, const int k, const int prodK,
-//              arma::mat Delta,
-//              Function obej, double &objValue){
-//    double  step=5,stepsize_best=0, objValue_best=objValue,objValue_temp;
-//    arma::mat Q,R,Yt,Yt_best=Y[k];
-//    int i;
-//    for(i=0;i<40;i++){//c
-//      step=step*0.66;
-//      Yt=Y[k]-step*Delta;
-//      arma::qr_econ(Q,R,Yt);
-//      if(R(0,0)<0){
-//        Q=-Q;
-//      }
-//      YList[k]=Q;
-//      if(prodK>1){
-//        objValue_temp=as< double>(obej(YList));
-//      }else{
-//        objValue_temp=as< double>(obej(YList[0]));
-//      }
-//      if(objValue_temp<objValue_best){
-//        objValue_best=objValue_temp;
-//        Yt_best=Q;
-//        stepsize_best=step;
-//      }
-//    }
-//    objValue=objValue_best;
-//    Y[k]=Yt_best;
-//    YList[k]=Yt_best;
-//    return stepsize_best;
-//}
-//
-//double Cayley_stiefel(List &YList, vector<arma::mat> &Y, const int k,
-//                   const int prodK,const int n, const int p, 
-//                  arma::mat gradF, Function obej, double &objValue){
-//      arma::mat Q,R,Yt,Yt_best=Y[k];
-//      Q=arma::mat(n,2*p,arma::fill::zeros);
-//      R=Q;
-//      Q(arma::span::all,arma::span(0,p-1))=gradF;
-//      Q(arma::span::all,arma::span(p,2*p-1))=Y[k];
-//      R(arma::span::all,arma::span(0,p-1))=Y[k];
-//      R(arma::span::all,arma::span(p,2*p-1))=-gradF;
-//      double  step=5,stepsize_best=0, objValue_best=objValue,objValue_temp;
-//    int i;
-//    for(i=0;i<40;i++){//c
-//      step=step*0.66;
-//      Yt=arma::eye<arma::mat>(2*p,2*p)+step/2*R.t()*Q;
-//      Yt=Y[k]-step*Q*Yt.i()*R.t()*Y[k];
-//      YList[k]=Yt;
-//      if(prodK>1){
-//        objValue_temp=as< double>(obej(YList));
-//      }else{
-//        objValue_temp=as< double>(obej(YList[0]));
-//      }
-//      if(objValue_temp<objValue_best){
-//        objValue_best=objValue_temp;
-//        Yt_best=Yt;
-//        stepsize_best=step;
-//      }
-//    }
-//    objValue=objValue_best;
-//    Y[k]=Yt_best;
-//    YList[k]=Yt_best;
-//    return stepsize_best;
-//}
-//
+
 //double expm_stiefel(List &YList, vector<arma::mat> &Y, 
 //              const int k, const int prodK, const int n, const int p,
 //              arma::mat Delta, Function obej, Function expm, double &objValue){

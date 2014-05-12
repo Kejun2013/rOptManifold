@@ -17,7 +17,10 @@ setClass("manifold",
                              obj=NULL,grad=NULL,hessian=NULL,
                              retraction="QR",
                              control=list(iterMax=1000,tol=0.0001,
-                                          alpha=5,beta=0.8,sigma=0.6)
+                                          alpha=5,beta=0.8,sigma=0.6,
+                                          theta=1,kappa=0.01,rhoMin=0.1,
+                                          Delta0=0.5,
+                                          DeltaMax=5)
                              )
          )
 
@@ -52,11 +55,11 @@ setReplaceMethod(
   signature="manifold",
   definition=function(x,i,j,value){
     i=tolower(i)
-    if(i=="obj" || i=="objective"){x@obj<-value}
-    if(i=="grad" || i=="gradient"){x@grad<-value}
-    if(i=="hessian"){x@hessian<-value}
-    if(i=="retract" || i=="retraction"){x@retraction<-value}
-    if(i=="control"){x@control[[j]]<-value}
+    if(i=="obj" || i=="o"){x@obj<-value}
+    if(i=="grad" || i=="g"){x@grad<-value}
+    if(i=="hessian" || i=="h"){x@hessian<-value}
+    if(i=="retractioin" || i=="r"){x@retraction<-value}
+    if(i=="control" || i=="c"){x@control[[j]]<-value}
     return(x)
   }
 )
@@ -135,6 +138,24 @@ setMethod("steepestDescent","manifold",
                   object@n,object@p,object@r,
                   object@mtype,retractMethod,
                   object@obj,object@grad,
+                  object@control,
+                  PACKAGE = "rOptManifold" )
+          })
+
+
+
+setGeneric("trustRegion",function(object){standardGeneric("trustRegion")})
+setMethod("trustRegion","manifold",
+          definition=function(object){
+            retractMethod=rep(0,length(object@n))
+            for(i in 1:length(object@n)){
+              retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,qr=1,cayley=2) 
+            }
+            .Call("trustRegion",
+                  object@Y,
+                  object@n,object@p,object@r,
+                  object@mtype,retractMethod,
+                  object@obj,object@grad,object@hessian,
                   object@control,
                   PACKAGE = "rOptManifold" )
           })
