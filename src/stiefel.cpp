@@ -1,5 +1,6 @@
 #include "stiefel.h"
 
+
 //second argument unused
 void stiefel::evalGradient(arma::mat gradF,std::string method){
   //xi=xi;
@@ -66,7 +67,30 @@ arma::mat stiefel::retract(double stepSize, std::string method){
 }
 
 stiefel::stiefel(int n1, int p1, int r1, 
-          Rcpp::NumericMatrix Y1,int retraction1):
-          manifold(n1,p1,r1,Y1,retraction1){}
+           Rcpp::NumericMatrix Y1,int retraction1):
+           manifold(n1,p1,r1,Y1,retraction1){}
 
+
+
+arma::mat stiefel::genretract(double stepSize, const arma::mat &Z){
+  if(retraction==1){//QR retraction
+    Yt=Y+stepSize*Z;
+    arma::qr_econ(retract_Q,retract_R,Yt);
+    if(retract_R(0,0)<0){
+      retract_Q=-retract_Q;
+    }
+    Yt=retract_Q;
+  }else if(retraction==2){//cayley
+    arma::mat Omega=Y.t()*Z;
+    Yt=arma::eye(p,p)-stepSize/2*Omega;
+    Yt=Y*Yt.i()*(arma::eye(p,p)+stepSize/2*Omega);
+  }
+  return Yt;
+}
+
+arma::mat stiefel::vectorTrans(double stepSize, const arma::mat &Z){
+  arma::mat ret=genretract(stepSize, Z);
+  arma::mat eta=(arma::eye(n,n)-ret*(ret.t()))*conjugateD+0.5*ret*(Y.t()*conjugateD-conjugateD.t()*Y);
+  return eta;
+}
 

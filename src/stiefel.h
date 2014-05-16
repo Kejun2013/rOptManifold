@@ -13,6 +13,11 @@ public:
   //double evalObjective(); // evaluate objective
   arma::mat retract(double stepSize,std::string method);
   double evalHessian(const arma::mat &H,const arma::mat &Z);
+  
+  
+  // new added
+  arma::mat genretract(double stepSize, const arma::mat &Z);
+  arma::mat vectorTrans(double stepSize, const arma::mat &Z);
 };
 
 #endif

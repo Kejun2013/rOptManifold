@@ -58,7 +58,7 @@ setReplaceMethod(
     if(i=="obj" || i=="o"){x@obj<-value}
     if(i=="grad" || i=="g"){x@grad<-value}
     if(i=="hessian" || i=="h"){x@hessian<-value}
-    if(i=="retractioin" || i=="r"){x@retraction<-value}
+    if(i=="retraction" || i=="r"){x@retraction<-value} # NOt retractioin
     if(i=="control" || i=="c"){x@control[[j]]<-value}
     return(x)
   }
@@ -136,7 +136,7 @@ setMethod("steepestDescent","manifold",
             .Call("steepestDescent",
                   object@Y,
                   object@n,object@p,object@r,
-                  object@mtype,retractMethod,
+                  object@mtype,retractMethod, 
                   object@obj,object@grad,
                   object@control,
                   PACKAGE = "rOptManifold" )
@@ -154,8 +154,28 @@ setMethod("trustRegion","manifold",
             .Call("trustRegion",
                   object@Y,
                   object@n,object@p,object@r,
-                  object@mtype,retractMethod,
+                  object@mtype,retractMethod, 
                   object@obj,object@grad,object@hessian,
                   object@control,
                   PACKAGE = "rOptManifold" )
           })
+
+
+## Kejun just does not know how to write this one
+setGeneric("conjugateGradient",function(object){standardGeneric("conjugateGradient")})
+setMethod("conjugateGradient","manifold",
+          definition=function(object){
+            retractMethod=rep(0,length(object@n))
+            for(i in 1:length(object@n)){
+              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2) 
+            }
+            .Call("conjugateGradient",
+                  object@Y,
+                  object@n,object@p,object@r,
+                  object@mtype,retractMethod, 
+                  object@obj,object@grad,
+                  object@control,
+                  PACKAGE = "rOptManifold" )
+          })
+
+

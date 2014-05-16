@@ -1,11 +1,12 @@
 #ifndef MANIFOLD_CLASS
 #define MANIFOLD_CLASS
 
+
 #include <RcppArmadillo.h>
 #include <vector>
 #include <algorithm>
 #include <string>
-#include <math.h>
+#include <math.h> 
 
 using namespace Rcpp;
 using namespace std;
@@ -18,15 +19,17 @@ protected:
   arma::mat Y,Yt;  
   //xi and xi_normal: gradient in the tangent space and normal space
   //hessian_Z: hessian operator on Z, as a result of function evalHessian() below
-  //descD: descent direction
-  arma::mat xi,xi_normal,hessian_Z,descD;  
+  //descD: descent direction 
+  //conjugdateD: conjugate descent direction
+  arma::mat xi,xi_normal,hessian_Z,descD;
+  arma::mat conjugateD;
   //Y is a n-by-p matrix of rank r
   //retraction is type of retraction expressed in 0,1,2,....
   int n,p,r,retraction;  
   double eDescent,Z_hessian_Z;//expected descent, and <Z, Hessian*Z>_Y
   
 public:
-  manifold(int n, int p, int r, NumericMatrix,int retraction1);
+  manifold(int n, int p, int r, NumericMatrix ,int retraction1);
   
   //evaluate the steepest descent direction;
   virtual void evalGradient(arma::mat gradF, std::string) =0;  
@@ -37,9 +40,33 @@ public:
   //evalHessian: Hessian operator on Z at current Y, H is the ordinary hessian
   //            return inner prodcut <Z,Hessian*Z>_Y
   virtual double evalHessian(const arma::mat &H,const arma::mat &Z)=0;
+
+ //'general retraction with certain stepsize
+ //'
+ //'@param stepSize
+ //'@param direction of vector
+  virtual arma::mat genretract(double stepSize, const arma::mat &Z)=0;
+
+//' The vector Transportation from Current Y to Yt
+//'
+//' Need to use genretract() member function
+//' @param stepSize
+//' @param direction of vector trasportation 
+//' @return a tangent vector to the Yt associated with retraction 
+  virtual arma::mat vectorTrans(double stepSize, const arma::mat &Z)=0;
   
+//' Set the conjugate direction
+//' 
+//' @param set eta as the new conjugate (tangent) direction conjugate_temp
+  void set_conjugateD (arma::mat conjugateD_temp) {conjugateD=conjugateD_temp;}
   
-  //virtual void vectorTrans()=0;
+//' Set the eDescent
+//' 
+//' @param set eDescent_temp as the new eDescent
+  void set_eDescent (double eDescent_temp) {eDescent=eDescent_temp;}
+  
+//' Get the conjuate direction
+   arma::mat get_conjugateD (){return conjugateD;}
   
   
   
