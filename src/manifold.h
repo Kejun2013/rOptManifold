@@ -67,14 +67,14 @@ public:
   
 //' Get the conjuate direction
    arma::mat get_conjugateD (){return conjugateD;}
-  
-  
+    
   
   //commonly used function across all manifold types
   void acceptY();
   
   //metric on the tagent space at Y: <X1,X2>_Y
-  double metric(const arma::mat &X1,const arma::mat &X2); 
+  //'Kejun puts it to virtual
+virtual  double metric(const arma::mat &X1,const arma::mat &X2); 
   
   
   //second order approximation of the objective function

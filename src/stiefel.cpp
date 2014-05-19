@@ -25,6 +25,11 @@ void stiefel::evalGradient(arma::mat gradF,std::string method){
     if(method=="steepest"){
       descD=-xi;
     }
+    else{ //Cayley gradient
+      xi=gradF-Y*(gradF.t())*Y;
+      descD=-xi;
+      
+    }
 //  }
 }
 
@@ -80,17 +85,31 @@ arma::mat stiefel::genretract(double stepSize, const arma::mat &Z){
       retract_Q=-retract_Q;
     }
     Yt=retract_Q;
+ /*original:
   }else if(retraction==2){//cayley
     arma::mat Omega=Y.t()*Z;
     Yt=arma::eye(p,p)-stepSize/2*Omega;
     Yt=Y*Yt.i()*(arma::eye(p,p)+stepSize/2*Omega);
   }
   return Yt;
+  */
+  }else if(retraction==2){//cayley
+    arma::mat A=Y.t()*Z;  //another approach that z=YA+Y_annhilator*B;
+    arma::mat Omega=(Z-1/2*Y*A)*Y.t()-Y*(Z.t()-1/2*A.t()*Y.t());
+    Yt=arma::eye(n,n)-stepSize/2*Omega;
+    Yt=Yt.i()*(arma::eye(n,n)+stepSize/2*Omega)*Y;
+  }
+  return Yt;
 }
 
 arma::mat stiefel::vectorTrans(double stepSize, const arma::mat &Z){
   arma::mat ret=genretract(stepSize, Z);
-  arma::mat eta=(arma::eye(n,n)-ret*(ret.t()))*conjugateD+0.5*ret*(Y.t()*conjugateD-conjugateD.t()*Y);
+  arma::mat eta=(arma::eye(n,n)-ret*(ret.t()))*conjugateD+0.5*ret*(ret.t()*conjugateD-conjugateD.t()*ret);
   return eta;
 }
 
+double stiefel::metric(const arma::mat &X1,const arma::mat &X2){
+ if(retraction==2) return arma::dot(X1,(arma::eye(n,n)-1/2*Y*Y.t())*X2);
+ else 
+ return arma::dot(X1,X2); 
+}
