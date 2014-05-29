@@ -178,4 +178,20 @@ setMethod("conjugateGradient","manifold",
                   PACKAGE = "rOptManifold" )
           })
 
+## Kejun just does not know how to write this one
+setGeneric("particleSwarm",function(object){standardGeneric("particleSwarm")})
+setMethod("particleSwarm","manifold",
+          definition=function(object){
+            retractMethod=rep(0,length(object@n))
+            for(i in 1:length(object@n)){
+              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2) 
+            }
+            .Call("particleSwarm",
+                  object@Y,
+                  object@n,object@p,object@r,
+                  object@mtype,retractMethod, 
+                  object@obj,object@grad,
+                  object@control,
+                  PACKAGE = "rOptManifold" )
+          })
 

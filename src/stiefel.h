@@ -19,6 +19,7 @@ public:
   arma::mat genretract(double stepSize, const arma::mat &Z);
   arma::mat vectorTrans(double stepSize, const arma::mat &Z);
   double metric(const arma::mat &X1,const arma::mat &X2);
+  void set_particle();
 };
 
 #endif

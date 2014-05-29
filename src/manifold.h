@@ -68,6 +68,10 @@ public:
 //' Get the conjuate direction
    arma::mat get_conjugateD (){return conjugateD;}
     
+//' Set initial particle swarm;
+  virtual void set_particle ()=0;    
+  
+  void set_Y(arma::mat Y_temp){Y=Y_temp;}
   
   //commonly used function across all manifold types
   void acceptY();

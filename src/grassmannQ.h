@@ -20,6 +20,7 @@ public:
   //New added
   arma::mat genretract(double stepSize, const arma::mat &Z);
   arma::mat vectorTrans(double stepSize, const arma::mat &Z);
+  void set_particle();
 };
 
 #endif

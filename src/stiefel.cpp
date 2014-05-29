@@ -113,3 +113,14 @@ double stiefel::metric(const arma::mat &X1,const arma::mat &X2){
  else 
  return arma::dot(X1,X2); 
 }
+
+void stiefel::set_particle(){
+  arma::mat y_temp=arma::randn(n,p);
+  arma::mat Q,R;
+  arma::qr_econ(Q,R,y_temp);
+  Y=Q;
+  arma::mat velocity_temp=arma::randn(n,p);
+  //psedo gradient as velocity;
+  evalGradient(velocity_temp,"steepest");
+  conjugateD=xi;
+  }

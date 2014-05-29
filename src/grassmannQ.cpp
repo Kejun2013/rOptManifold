@@ -38,7 +38,12 @@ arma::mat grassmannQ::genretract(double stepSize, const arma::mat &Z){
 //empty
   return arma::eye(n,n);
 }
-  arma::mat grassmannQ::vectorTrans(double stepSize, const arma::mat &Z){
+
+arma::mat grassmannQ::vectorTrans(double stepSize, const arma::mat &Z){
     return arma::eye(n,n);
+}
+
+void grassmannQ::set_particle(){
+  Yt=Y;
 }
 
