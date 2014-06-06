@@ -1,4 +1,4 @@
-//#include <omp.h>
+#include <omp.h>
 #include "stiefel.h"
 #include "grassmannQ.h"
 #include <stdlib.h>
@@ -10,6 +10,8 @@
 // iterMax: maximum number of iterations
 // tol: tolerance of accuracy
 //retract: retraction method
+
+//// [[Rcpp::plugins(openmp)]]
 
 RcppExport SEXP  particleSwarm(SEXP YList1, SEXP n1, SEXP p1, SEXP r1,
                       SEXP mtype1,SEXP retraction1,
@@ -97,7 +99,7 @@ BEGIN_RCPP
         objValue_b[outter_num]=as< double>(obej(YList_temp[0]));
       }
       if(objValue_b[outter_num]<objValue) {
-        for(k=0;k<prodK;k++) *manifoldYG[k]=*manifoldYP[outter_num][k];
+        for(k=0;k<prodK;k++) manifoldYG[k]->set_Y(manifoldYP[outter_num][k]->get_Y());
         objValue=objValue_b[outter_num];
       }  
   }
@@ -109,47 +111,73 @@ BEGIN_RCPP
   arma::mat velocity;
   //R01 and R02 are uniform (0,1) distributed numbers;
   srand (time(NULL));
-  double R01,R02;
+  double R01=0.5,R02=0.5;
+  int thread_num;
+  int subthread_num=0,subthread_num_1=0; //to test whether parallelism happens;
   
   //begin iteration  
   while(iter<iterMax){
     iter++;
-    for(outter_num=0;outter_num<particle_num;outter_num++){
-      for(k=0;k<prodK;k++){
-        R01=((double) rand() / (RAND_MAX+1));
-        R02=((double) rand() / (RAND_MAX+1));
-        velocity=manifoldYP[outter_num][k]->get_conjugateD();
-        velocity+=phi1*R01*(manifoldYB[outter_num][k]->get_Y()-
-                             manifoldYP[outter_num][k]->get_Y());
-        velocity+=phi2*R02*(manifoldYG[k]->get_Y()-
-                              manifoldYP[outter_num][k]->get_Y());
-        manifoldYP[outter_num][k]->evalGradient(velocity,"steepest");
-        velocity=manifoldYP[outter_num][k]->get_Gradient();
-        YList_temp[k]=manifoldYP[outter_num][k]->genretract(1,velocity);
-        velocity=manifoldYP[outter_num][k]->vectorTrans(1,velocity);
-        manifoldYP[outter_num][k]->set_conjugateD(velocity); 
-        manifoldYP[outter_num][k]->acceptY();
-      }  
-      if(prodK>1){
-        objValue_p[outter_num]=as< double>(obej(YList_temp));
-      }else{
-        objValue_p[outter_num]=as< double>(obej(YList_temp[0]));
-      }
-      if(objValue_p[outter_num]<objValue_b[outter_num]){ 
-        objValue_b[outter_num]=objValue_p[outter_num];
-        for(k=0;k<prodK;k++) *manifoldYB[outter_num][k]=*manifoldYP[outter_num][k];
-      }  
-      if(objValue_b[outter_num]<objValue) {
-        for(k=0;k<prodK;k++) manifoldYG[k]->set_Y(manifoldYP[outter_num][k]->get_Y());
-        objValue=objValue_b[outter_num];
-      }  
-
-     }// iteration over particles;
-    
+    #pragma omp parallel shared(subthread_num,manifoldYG,thread_num,objValue,manifoldYB) \
+       firstprivate(velocity,objValue_p,objValue_b,YList_temp) \
+       private(R01,R02,k) 
+    { 
+      
+      #pragma omp for schedule(static,8) lastprivate(subthread_num) ordered
+        for(outter_num=0;outter_num<particle_num;outter_num++){
+          if(omp_get_thread_num()==1) subthread_num_1++; //to test whether parallelism happens;
+          thread_num=omp_get_num_threads();
+          #pragma omp ordered
+          {  
+            for(k=0;k<prodK;k++){
+              R01=((double) rand() / (RAND_MAX+1));
+              R02=((double) rand() / (RAND_MAX+1));
+              velocity=omega*manifoldYP[outter_num][k]->get_conjugateD();
+              #pragma omp critical
+              {
+              velocity+=phi1*R01*(manifoldYB[outter_num][k]->get_Y()-
+                                   manifoldYP[outter_num][k]->get_Y());
+              velocity+=phi2*R02*(manifoldYG[k]->get_Y()-
+                                    manifoldYP[outter_num][k]->get_Y());
+              }  //out of critical                    
+              manifoldYP[outter_num][k]->evalGradient(velocity,"steepest");
+              velocity=manifoldYP[outter_num][k]->get_Gradient();
+              YList_temp[k]=manifoldYP[outter_num][k]->genretract(1,velocity);
+              velocity=manifoldYP[outter_num][k]->vectorTrans(1,velocity);
+              manifoldYP[outter_num][k]->set_conjugateD(velocity); 
+              manifoldYP[outter_num][k]->acceptY();
+            }  
+            if(prodK>1){
+            objValue_p[outter_num]=as< double>(obej(YList_temp));
+            }else{
+            objValue_p[outter_num]=as< double>(obej(YList_temp[0]));
+            }
+            #pragma omp critical
+            {
+            if(objValue_p[outter_num]<objValue_b[outter_num]){ 
+            objValue_b[outter_num]=objValue_p[outter_num];
+            for(k=0;k<prodK;k++) *manifoldYB[outter_num][k]=*manifoldYP[outter_num][k];
+            }  
+            if(objValue_b[outter_num]<objValue) {
+            for(k=0;k<prodK;k++) manifoldYG[k]->set_Y(manifoldYP[outter_num][k]->get_Y());
+              objValue=objValue_b[outter_num];
+            }
+            }  //out of critical
+          } //out of order          
+        
+         }// iteration over particles;
+         #pragma omp single
+         {
+           subthread_num+=subthread_num_1;
+         }
+    } //out of parallel region;
   }// outer iteration
+
   for(k=0;k<prodK;k++) YList[k]=manifoldYG[k]->get_Y();  
   return List::create(Named("optY")=YList,
-              Named("optValue")=objValue);
+              Named("optValue")=objValue,
+              Named("threads")=thread_num,
+              Named("sub_threads")=subthread_num);
           //    Named("NumIter")=iter);
 END_RCPP
 }//end of function

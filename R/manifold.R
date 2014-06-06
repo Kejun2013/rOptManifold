@@ -195,3 +195,5 @@ setMethod("particleSwarm","manifold",
                   PACKAGE = "rOptManifold" )
           })
 
+Sys.setenv("PKG_CXXFLAGS"="-fopenmp")  
+Sys.setenv("PKG_LIBS"="-fopenmp")
