@@ -12,7 +12,7 @@ void grassmannQ::evalGradient(arma::mat gradF, std::string method){
 
 
 
-arma::mat grassmannQ::retract(double stepSize, std::string method){
+arma::mat grassmannQ::retract(double stepSize, std::string method,bool first){
   arma::mat retract_middle;
   retract_middle=arma::mat(2*p,p,arma::fill::zeros);
   retract_middle(arma::span(0,p-1),arma::span::all)
@@ -39,8 +39,12 @@ arma::mat grassmannQ::genretract(double stepSize, const arma::mat &Z){
   return arma::eye(n,n);
 }
 
-arma::mat grassmannQ::vectorTrans(double stepSize, const arma::mat &Z){
-    return arma::eye(n,n);
+void grassmannQ::vectorTrans(){
+    //empty
+}
+
+void grassmannQ::update_conjugateD(double eta){
+  //empty
 }
 
 void grassmannQ::set_particle(){

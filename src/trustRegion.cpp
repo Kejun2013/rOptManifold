@@ -1,6 +1,7 @@
-//#include <omp.h>
+
 #include "stiefel.h"
 #include "grassmannQ.h"
+#include "fixRank.h"
 
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is the objective function; f2 is the gradient function; f3 is the hessian function
@@ -21,6 +22,7 @@ BEGIN_RCPP
   List control(control1);
   IntegerVector retraction(retraction1);
   int iterMax=as< int>(control["iterMax"]);
+  int iterSubMax=as< int>(control["iterSubMax"]);
   double tol=as< double>(control["tol"]);
   double Delta0=as< double>(control["Delta0"]);
   double DeltaMax=as< double>(control["DeltaMax"]);
@@ -48,7 +50,8 @@ BEGIN_RCPP
        manifoldY.push_back(new grassmannQ(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
-       
+       manifoldY.push_back(new fixRank(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));       
      }else if(typeTemp=="grassmanS"){
        
      }
@@ -59,7 +62,7 @@ BEGIN_RCPP
   bool flag=true,bdryTouched;
   
   //value of objective function, m function, related descent amount
-  double objValue,objValue_temp,objDesc,m_temp,mDesc,DeltaL;
+  double objValue,objValue_temp,objValue_outer,objDesc,m_temp,mDesc;//,DeltaL;
   double alpha,beta,rho, qA,qB,qC,tau,rrNorm0,rrNorm,
           etaNorm,etaNorm_new,hessQterm;
   //gradient, hessian of objective F in ambient space
@@ -73,6 +76,7 @@ BEGIN_RCPP
   
   //begin iteration
   while(iter<iterMax && flag){
+    objValue_outer=objValue;
     //gradient of objective funtion
     iter++;
     for(k=0;k<prodK;k++){
@@ -86,7 +90,7 @@ BEGIN_RCPP
         rr=manifoldY[k]->get_Gradient();
         dd=-rr; //little delta, n-by-p
         eta=arma::mat(n[k],p[k],arma::fill::zeros);  //optimizer of sub-problem
-        rrNorm=manifoldY[k]->metric(rr,rr);  //<r,r>_Y
+        rrNorm=manifoldY[k]->gradMetric();  //<r,r>_Y
         //rrNorm0: controlling stopping condition for the subproblem
         rrNorm0=rrNorm;
         rrNorm0=rrNorm0*min(pow(rrNorm0,theta),kappa);
@@ -94,14 +98,14 @@ BEGIN_RCPP
         //begin of inner loop: sub-problem
         iterSub=0;
         bdryTouched=false;  //boundary of trust region touched?
-        while(iterSub<50){//////////////////
+        while(iterSub<iterSubMax){//////////////////
           iterSub++;
           if(prodK>1){
              hessianF=as< arma::mat>(hessian(YList,k+1,dd));
           }else{
             hessianF=as< arma::mat>(hessian(YList[0],dd));
           }
-          hessQterm=manifoldY[k]->evalHessian(hessianF,dd);
+          hessQterm=manifoldY[k]->evalHessian(hessianF,dd);//<Z,H*Z>_Y, the quadratic term
           if(hessQterm<=0.0001){
             //delta is the direction of negative curvature
             //solve a quadratic equation to find the point touching boundary
@@ -151,7 +155,7 @@ BEGIN_RCPP
 //        hessQterm=manifoldY[k]->evalHessian(hessianF,eta);/////////////////
 //        HZz=manifoldY[k]->get_hessianZ();///////////////////////
         manifoldY[k]->set_descD(eta);
-        YList[k]=manifoldY[k]->retract(1,"trustRegion");
+       YList[k]=manifoldY[k]->retract(1,"trustRegion",true);
         if(prodK>1){
           objValue_temp=as< double>(obej(YList));
         }else{
@@ -172,18 +176,14 @@ BEGIN_RCPP
           YList[k]=manifoldY[k]->get_Y();
         }
      }// iteration over product component
-     DeltaL=(*max_element(Delta.begin(),Delta.end()));
+     objDesc=objValue_outer-objValue;
     //if(tol> DeltaL) flag=false;
-    if(rho>0.5 & mDesc<tol) flag=false;
+   //  DeltaL=(*max_element(Delta.begin(),Delta.end()));
+    if(rho>rhoMin*1.05 && objDesc<tol) flag=false;
   }// outer iteration
 
   return List::create(Named("optY")=YList,
               Named("optValue")=objValue,
-              Named("NumIter")=iter,
-              Named("rho")=rho,
-              Named("m_temp")=m_temp,
-//              Named("hessQterm")=hessQterm,
-//              Named("eta")=eta,
-              Named("DeltaL")=DeltaL);
+              Named("NumIter")=iter);
 END_RCPP
 }//end of function

@@ -1,7 +1,7 @@
 //#include <omp.h>
 #include "stiefel.h"
 #include "grassmannQ.h"
-
+#include "fixRank.h"
 //' Conjugate gradient method
 //' 
 //' @param YList a (list of) of matrix(ces) of dimensional n1*p1, initial values
@@ -15,6 +15,8 @@
 //' @param retraction1 retraction method represented by int
 //' @return an R list of argmin, mininum values and number of iterations 
 
+
+//The conjugate direction is stored in descD;
 
 RcppExport SEXP  conjugateGradient(SEXP YList1, SEXP n1, SEXP p1, SEXP r1,
                       SEXP mtype1,SEXP retraction1,
@@ -31,7 +33,8 @@ BEGIN_RCPP
   double sigma=as< double>(control["sigma"]);
   double beta=as< double>(control["beta"]);
   double alpha=as< double>(control["alpha"]);
-
+  //0: Fletcher-Reeves 1: Polak-Ribiere
+  int conjMethod=as< int>(control["conjMethod"]);
   
   // Initialization of Data points
   IntegerVector n(n1),p(p1),r(r1);
@@ -52,31 +55,21 @@ BEGIN_RCPP
        manifoldY.push_back(new grassmannQ(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
-       
+       manifoldY.push_back(new fixRank(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));       
      }
   }
     
   //define other varibles
-  int iter=0; // outer loop, inner loop control
-  bool flag=true;
-  double objValue,objValue_temp,eDescent,objDesc,stepsize;
-  
+  int iter=0,iterInner=0; // outer loop, inner loop control
+  bool flag=true,first=true;
+  double objValue,objValue_outer,objValue_temp,objDesc,stepsize;
+  double gradNorm_temp=0,ang_check=0;
   //besides the stepsize,we need one more eta as Fletcher-Reeves
-  vector<double> eta;
-  for (k=0;k<prodK;k++){  //captial K in prodK
-    eta.push_back(0);
-  }
+  vector< double> gradNorm(prodK,1.0),eDescent(prodK,1.0);
   
-  //
   
-  //for conjugate gradient, we need conjugateD_temp;
-  arma::mat conjugateD_temp;
-  
-  //value of objective function
-  //eDescent: expected descent amount
-  //largest obj descent amount
-//  Function expm(f3);
-  arma::mat gradF;  //gradient in ambient space
+  arma::mat gradF,xi_bar;  //gradient in ambient space
   
   if(prodK>1){
     objValue=as< double>(obej(YList));
@@ -86,61 +79,105 @@ BEGIN_RCPP
   
   //need to start somewhere here 
   
-  double gradNorm=1.0;
+  double eta=0.0;
  // int iterInner=0; // to control the inner iterations;
   
+  
+  //initializing conjugate direction
+  for(k=0;k<prodK;k++){
+      if(prodK>1){
+        gradF=as< arma::mat>(grad(YList,k+1));
+      }else{
+        gradF=as< arma::mat>(grad(YList[0]));
+      }
+        //gradient on the stiefel manifold, set descD to -xi
+      manifoldY[k]->evalGradient(gradF,"steepest");
+      gradNorm[k]=manifoldY[k]->gradMetric(); //<gradF,gradF>_Y
+      eDescent[k]=gradNorm[k];
+  }
   
   while(iter<iterMax && flag){
     //gradient of objective funtion
     iter++;
-    objDesc=-1;
+    objValue_outer=objValue;
     for(k=0;k<prodK;k++){
-        if(prodK>1){
-          gradF=as< arma::mat>(grad(YList,k+1));
-        }else{
-          gradF=as< arma::mat>(grad(YList[0]));
-        }
-        //gradient on the stiefel manifold
-        if(retraction[k]!=2) manifoldY[k]->evalGradient(gradF,"steepest");
-        else manifoldY[k]->evalGradient(gradF,"a");
-        if(eta[k]==0) manifoldY[k]->set_conjugateD(-(manifoldY[k]->get_Gradient()));
-        
-        
-      //  gradNorm=arma::dot(manifoldY[k]->get_Gradient(),manifoldY[k]->get_Gradient());
-        gradNorm=manifoldY[k]->metric(manifoldY[k]->get_Gradient(),manifoldY[k]->get_Gradient());
         stepsize=alpha/beta;
-        eDescent=sigma/beta*manifoldY[k]->metric(manifoldY[k]->get_Gradient(),-(manifoldY[k]->get_conjugateD()));
-        do{//c
+        //Rcpp::Rcout<<"eD="<<eDescent[k]<<endl;
+        eDescent[k]=sigma/beta*(eDescent[k]); //<descD,grad F>_Y
+        eDescent[k]=abs(eDescent[k]);
+        first=true;
+        iterInner=0;
+        //manifoldY[k]->set_descD(manifoldY[k]->get_conjugateD());
+        
+        do{//choose appropriate stepsize by Armijo rule
+          iterInner++;
           stepsize=stepsize*beta;
-          eDescent=eDescent*beta;
-          YList[k]=manifoldY[k]->genretract(stepsize,manifoldY[k]->get_conjugateD());
+          eDescent[k]=eDescent[k]*beta;
+          YList[k]=manifoldY[k]->retract(stepsize,"conjugateD",first);
           if(prodK>1){
             objValue_temp=as< double>(obej(YList));
           }else{
             objValue_temp=as< double>(obej(YList[0]));
           }
-        }while((objValue-objValue_temp)<eDescent);
-        //step size iteration
-        //if a stepsize is accepted, update current location
-        conjugateD_temp= manifoldY[k]->vectorTrans(stepsize,manifoldY[k]->get_conjugateD());   
-        manifoldY[k]->acceptY();   
-        //update gradient and conjudate gradient
-        if(retraction[k]!=2) manifoldY[k]->evalGradient(gradF,"steepest");
-        else manifoldY[k]->evalGradient(gradF,"a");
+          first=false;
+        }while((objValue-objValue_temp)<eDescent[k] && iterInner<1000);
+        //end of step size iteration
         
-        eta[k]=manifoldY[k]->metric(manifoldY[k]->get_Gradient(),manifoldY[k]->get_Gradient())/(gradNorm);
-        conjugateD_temp*=eta[k];
-        conjugateD_temp+=-(manifoldY[k]->get_Gradient());
         
-        manifoldY[k]->set_conjugateD(conjugateD_temp);        
-        objDesc=objValue-objValue_temp;
-        objValue=objValue_temp;
+        //vector trans of descD to Yt
+          manifoldY[k]->vectorTrans();
+         xi_bar=manifoldY[k]->get_Gradient(); //current gradient
+         
+         //move toward new position and compute next descD
+          manifoldY[k]->acceptY();
+          objValue=objValue_temp;
+          
+          //compute new gradient at new position
+          if(prodK>1){
+            gradF=as< arma::mat>(grad(YList,k+1));
+          }else{
+            gradF=as< arma::mat>(grad(YList[0]));
+          }
+          manifoldY[k]->evalGradient(gradF,"conjugate");
+          
+          //decide eta for descD_new=-xi_Yt+eta*descD_transported
+          if(conjMethod==0){//Fletcher-Reeves
+            eta=(manifoldY[k]->gradMetric())/gradNorm[k];
+            gradNorm[k]=eta*gradNorm[k];//update gradient norm at current position
+          }else{//Polak-Ribiere, conjMethod==1
+            gradNorm_temp=manifoldY[k]->gradMetric();
+            eta=(gradNorm_temp-
+                    manifoldY[k]->metric(xi_bar,
+                                manifoldY[k]->get_Gradient()))/gradNorm[k];
+            eta=std::max(0.0,eta);
+            gradNorm[k]=gradNorm_temp;
+          }
+          //update descD according to descD_new=-xi_Yt+eta*descD_transported
+          //done after transport descD and compute new gradient
+          manifoldY[k]->update_conjugateD(eta);
+          
+          //check the angel of xi and descD, if >-(0.05) set descD=-xi
+           //this makes sure descD is a descent direction
+           ang_check=manifoldY[k]->grad_descD_Metric();
+           eDescent[k]=ang_check;
+           ang_check=ang_check/sqrt(gradNorm[k]);
+           ang_check=ang_check/sqrt(manifoldY[k]->descDMetric());
+           //Rcpp::Rcout<<"ang"<<ang_check<<endl;
+           if(ang_check>(-0.05)){
+                manifoldY[k]->retrieve_steepest();
+                eDescent[k]=gradNorm[k];
+           }
+          //after moving all directions from Y to Yt, set Y=Yt
+
     }// iteration over product component
+    objDesc=objValue_outer-objValue;
+    //Rcpp::Rcout<<"desc="<<objDesc<<endl;
     if(tol>objDesc) { 
-      double tolInner=0.0;  // in CG, sometimes conjugate=0,while grad!=0
-      for(k=0;k<prodK;k++) tolInner+=manifoldY[k]->metric(manifoldY[k]->get_Gradient(),manifoldY[k]->get_Gradient());
-      if(abs(objValue)*tol>sqrt(tolInner)) flag=false;
-     // else eta[k]=0;
+      flag=false;
+//      double tolInner=0.0;  // in CG, sometimes conjugate=0,while grad!=0
+//      for(k=0;k<prodK;k++) tolInner+=gradNorm[k];
+//      if(abs(objValue)*tol>sqrt(tolInner)) flag=false;
+//     // else eta[k]=0;
     }
   }// outer iteration
 

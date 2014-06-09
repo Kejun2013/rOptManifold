@@ -16,11 +16,14 @@ setClass("manifold",
                              mtype="stiefel",
                              obj=NULL,grad=NULL,hessian=NULL,
                              retraction="QR",
-                             control=list(iterMax=1000,tol=0.0001,
+                             control=list(iterMax=1000,
+                                          iterSubMax=30,
+                                          tol=0.0001,
+                                          conjMethod="PR",
                                           alpha=5,beta=0.8,sigma=0.6,
                                           theta=1,kappa=0.01,rhoMin=0.1,
-                                          Delta0=0.5,
-                                          DeltaMax=5)
+                                          Delta0=0.5,DeltaMax=5,
+                                          phi1=2,phi2=2,omega=1)
                              )
          )
 

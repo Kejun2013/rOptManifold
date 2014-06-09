@@ -1,7 +1,7 @@
 //#include <omp.h>
 #include "stiefel.h"
 #include "grassmannQ.h"
-
+#include "fixRank.h"
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is objective function; f2 is gradient function
 // iterMax: maximum number of iterations
@@ -44,14 +44,15 @@ BEGIN_RCPP
        manifoldY.push_back(new grassmannQ(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
-       
+       manifoldY.push_back(new fixRank(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
      }
   }
     
   //define other varibles
-	int iter=0; // outer loop, inner loop control
-  bool flag=true;
-  double objValue,objValue_temp,eDescent,objDesc,stepsize;
+	int iter=0,iterInner=0; // outer loop, inner loop control
+  bool flag=true,first=true;
+  double objValue,objValue_temp,objValue_outer,eDescent,objDesc,stepsize;
   //value of objective function
   //eDescent: expected descent amount
   //largest obj descent amount
@@ -69,6 +70,7 @@ BEGIN_RCPP
     //gradient of objective funtion
     iter++;
     objDesc=-1;
+    objValue_outer=objValue;
     for(k=0;k<prodK;k++){
         if(prodK>1){
           gradF=as< arma::mat>(grad(YList,k+1));
@@ -76,25 +78,30 @@ BEGIN_RCPP
           gradF=as< arma::mat>(grad(YList[0]));
         }
         //gradient on the stiefel manifold
-        manifoldY[k]->evalGradient(gradF,"steepest");
+       manifoldY[k]->evalGradient(gradF,"steepest");
         stepsize=alpha/beta;
         eDescent=sigma/beta*(manifoldY[k]->get_eDescent());
-        do{//c
+        first=true;
+        
+        iterInner=0;
+        do{//choose appropirate step size according to Armijo rule
+          iterInner++;
           stepsize=stepsize*beta;
           eDescent=eDescent*beta;
-          YList[k]=manifoldY[k]->retract(stepsize,"steepest");
+          YList[k]=manifoldY[k]->retract(stepsize,"steepest",first);
           if(prodK>1){
             objValue_temp=as< double>(obej(YList));
           }else{
             objValue_temp=as< double>(obej(YList[0]));
           }
-        }while((objValue-objValue_temp)<eDescent);
+          first=false;
+        }while((objValue-objValue_temp)<eDescent && iterInner<1000);
         //step size iteration
         //if a stepsize is accepted, update current location
         manifoldY[k]->acceptY();
-        objDesc=objValue-objValue_temp;
         objValue=objValue_temp;
     }// iteration over product component
+    objDesc=objValue_outer-objValue;
     if(tol>objDesc) flag=false;
   }// outer iteration
   return List::create(Named("optY")=YList,
