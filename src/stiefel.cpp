@@ -13,7 +13,7 @@ void stiefel::evalGradient(arma::mat gradF,std::string method){
       eDescent=arma::dot(gradF,xi);
       descD=-xi;
     }else if(method=="particleSwarm"){
-      descD=xi;
+      descD=xi;  //why not -xi?
     }
 //    xi=gradF-Y*(gradF.t())*Y;
 }

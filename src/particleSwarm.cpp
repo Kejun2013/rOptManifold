@@ -3,7 +3,7 @@
 #include "grassmannQ.h"
 #include <stdlib.h>
 #include <time.h>
-
+#include "sphere.h"
 
 
 
@@ -82,6 +82,14 @@ BEGIN_RCPP
        }else if(typeTemp=="fixedRank"){
        
        }
+       else if(typeTemp=="sphere"){
+         manifoldYP[outter_num].push_back(new sphere(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+         manifoldYB[outter_num].push_back(new sphere(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new sphere(n[k],p[k],r[k],
+                                                     yTemp,retraction[k])); 
+       }                                               
        manifoldYP[outter_num][k]->set_particle();  
        *manifoldYB[outter_num][k]=*manifoldYP[outter_num][k];  
      //  if(outter_num==0)  *manifoldYG[k]=*manifoldYP[outter_num][k];

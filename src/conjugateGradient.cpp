@@ -2,6 +2,7 @@
 #include "stiefel.h"
 #include "grassmannQ.h"
 #include "fixRank.h"
+#include "sphere.h"
 //' Conjugate gradient method
 //' 
 //' @param YList a (list of) of matrix(ces) of dimensional n1*p1, initial values
@@ -34,7 +35,10 @@ BEGIN_RCPP
   double beta=as< double>(control["beta"]);
   double alpha=as< double>(control["alpha"]);
   //0: Fletcher-Reeves 1: Polak-Ribiere
-  int conjMethod=as< int>(control["conjMethod"]);
+  string conjMethod1=as< string>(control["conjMethod"]);
+  int conjMethod;
+  if(conjMethod1=="PR") conjMethod=1;
+  else conjMethod=0;
   
   // Initialization of Data points
   IntegerVector n(n1),p(p1),r(r1);
@@ -58,6 +62,10 @@ BEGIN_RCPP
        manifoldY.push_back(new fixRank(n[k],p[k],r[k],
                                   yTemp,retraction[k]));       
      }
+     else if(typeTemp=="sphere"){
+       manifoldY.push_back(new sphere(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }     
   }
     
   //define other varibles

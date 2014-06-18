@@ -2,6 +2,7 @@
 #include "stiefel.h"
 #include "grassmannQ.h"
 #include "fixRank.h"
+#include "sphere.h"
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is objective function; f2 is gradient function
 // iterMax: maximum number of iterations
@@ -45,6 +46,11 @@ BEGIN_RCPP
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
        manifoldY.push_back(new fixRank(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }
+     //new added
+     else if(typeTemp=="sphere"){
+       manifoldY.push_back(new sphere(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }
   }
