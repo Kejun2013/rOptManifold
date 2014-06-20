@@ -31,7 +31,7 @@ problem["control","rhoMin"]=0.1
 problem["control","iterMax"]=1000
 problem["control","alpha"]=5
 problem["control","iterSubMax"]=1000
-problem["control","conjMethod"]=1
+problem["control","conjMethod"]="PR"
 
 res=trustRegion(problem)
 res=steepestDescent(problem)
