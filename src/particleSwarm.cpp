@@ -1,7 +1,6 @@
 #include <omp.h>
 #include <stdlib.h>
 #include <time.h>
-#include "sphere.h"
 
 #include "stiefel.h"
 #include "grassmannQ.h"
@@ -85,26 +84,16 @@ BEGIN_RCPP
                                                      yTemp,retraction[k]));                                     
        }else if(typeTemp=="fixedRank"){
        
-<<<<<<< HEAD
-       } else if(typeTemp=="sphere"){
-=======
+
        }
        else if(typeTemp=="sphere"){
->>>>>>> db9e6615d535a92908fe14fa8d41e7e87a79cc28
          manifoldYP[outter_num].push_back(new sphere(n[k],p[k],r[k],
                                     yTemp,retraction[k]));
          manifoldYB[outter_num].push_back(new sphere(n[k],p[k],r[k],
                                     yTemp,retraction[k]));     
-<<<<<<< HEAD
-        if(outter_num==0)  manifoldYG.push_back(new sphere(n[k],p[k],r[k],
-                                                     yTemp,retraction[k])); 
-       }  
-
-=======
           if(outter_num==0)  manifoldYG.push_back(new sphere(n[k],p[k],r[k],
                                                      yTemp,retraction[k])); 
        }                                               
->>>>>>> db9e6615d535a92908fe14fa8d41e7e87a79cc28
        manifoldYP[outter_num][k]->set_particle();  
        *manifoldYB[outter_num][k]=*manifoldYP[outter_num][k];  
      //  if(outter_num==0)  *manifoldYG[k]=*manifoldYP[outter_num][k];

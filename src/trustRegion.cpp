@@ -2,12 +2,9 @@
 #include "stiefel.h"
 #include "grassmannQ.h"
 #include "fixRank.h"
-<<<<<<< HEAD
 #include "fixRankPSD.h"
 #include "spectahedron.h"
 #include "elliptope.h"
-=======
->>>>>>> db9e6615d535a92908fe14fa8d41e7e87a79cc28
 #include "sphere.h"
 
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
@@ -58,7 +55,6 @@ BEGIN_RCPP
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
        manifoldY.push_back(new fixRank(n[k],p[k],r[k],
-<<<<<<< HEAD
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRankPSD"){
        manifoldY.push_back(new fixRankPSD(n[k],p[k],r[k],
@@ -73,16 +69,6 @@ BEGIN_RCPP
        manifoldY.push_back(new sphere(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }    
-=======
-                                  yTemp,retraction[k]));       
-     }else if(typeTemp=="grassmanS"){
-       
-     }
-     else if(typeTemp=="sphere"){
-       manifoldY.push_back(new sphere(n[k],p[k],r[k],
-                                  yTemp,retraction[k]));
-     }                              
->>>>>>> db9e6615d535a92908fe14fa8d41e7e87a79cc28
   }
     
   //define other varibles
