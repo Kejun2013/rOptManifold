@@ -23,7 +23,8 @@ protected:
   //conjugdateD: conjugate descent direction
   arma::mat xi,xi_normal,hessian_Z,descD;
   //Y is a n-by-p matrix of rank r
-  //retraction is type of retraction expressed in 0,1,2,....
+  //retraction is type of retraction expressed in 0,1,2,3,....
+  //retraction: 
   int n,p,r,retraction;  
   double eDescent,Z_hessian_Z;//expected descent, and <Z, Hessian*Z>_Y
   
@@ -44,7 +45,7 @@ public:
  //'
  //'@param stepSize
  //'@param direction of vector
-  virtual arma::mat genretract(double stepSize, const arma::mat &Z)=0;
+ // virtual arma::mat genretract(double stepSize, const arma::mat &Z)=0;
 
 //' The vector Transportation from Current Y to Yt
 //'
