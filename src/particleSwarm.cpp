@@ -1,11 +1,14 @@
 #include <omp.h>
-#include "stiefel.h"
-#include "grassmannQ.h"
 #include <stdlib.h>
 #include <time.h>
+
+#include "stiefel.h"
+#include "grassmannQ.h"
+#include "fixRank.h"
+#include "fixRankPSD.h"
+#include "spectahedron.h"
+#include "elliptope.h"
 #include "sphere.h"
-
-
 
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is objective function; f2 is gradient function
@@ -81,6 +84,7 @@ BEGIN_RCPP
                                                      yTemp,retraction[k]));                                     
        }else if(typeTemp=="fixedRank"){
        
+
        }
        else if(typeTemp=="sphere"){
          manifoldYP[outter_num].push_back(new sphere(n[k],p[k],r[k],

@@ -2,6 +2,9 @@
 #include "stiefel.h"
 #include "grassmannQ.h"
 #include "fixRank.h"
+#include "fixRankPSD.h"
+#include "spectahedron.h"
+#include "elliptope.h"
 #include "sphere.h"
 
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
@@ -52,14 +55,20 @@ BEGIN_RCPP
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
        manifoldY.push_back(new fixRank(n[k],p[k],r[k],
-                                  yTemp,retraction[k]));       
-     }else if(typeTemp=="grassmanS"){
-       
-     }
-     else if(typeTemp=="sphere"){
+                                  yTemp,retraction[k]));
+     }else if(typeTemp=="fixedRankPSD"){
+       manifoldY.push_back(new fixRankPSD(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }else if(typeTemp=="elliptope"){
+       manifoldY.push_back(new elliptope(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }else if(typeTemp=="spectahedron"){
+       manifoldY.push_back(new spectahedron(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }else if(typeTemp=="sphere"){
        manifoldY.push_back(new sphere(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
-     }                              
+     }    
   }
     
   //define other varibles
@@ -94,7 +103,7 @@ BEGIN_RCPP
          
         rr=manifoldY[k]->get_Gradient();
         dd=-rr; //little delta, n-by-p
-        eta=arma::mat(n[k],p[k],arma::fill::zeros);  //optimizer of sub-problem
+        eta=arma::mat(dd.n_rows,dd.n_cols,arma::fill::zeros);  //optimizer of sub-problem
         rrNorm=manifoldY[k]->gradMetric();  //<r,r>_Y
         //rrNorm0: controlling stopping condition for the subproblem
         rrNorm0=rrNorm;
@@ -155,10 +164,9 @@ BEGIN_RCPP
           }else{
             hessianF=as< arma::mat>(hessian(YList[0],eta));
           }
+
         m_temp=manifoldY[k]->secondOrderApprox(objValue,eta,hessianF);
-        
-//        hessQterm=manifoldY[k]->evalHessian(hessianF,eta);/////////////////
-//        HZz=manifoldY[k]->get_hessianZ();///////////////////////
+
         manifoldY[k]->set_descD(eta);
        YList[k]=manifoldY[k]->retract(1,"trustRegion",true);
         if(prodK>1){
