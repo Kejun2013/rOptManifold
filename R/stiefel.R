@@ -84,7 +84,9 @@ sphere<-function(n=10,p=2,obj=NULL,grad=NULL,hessian=NULL,retraction="Exp"){
   }
   Y=lapply(1:length(n),function(ii){
     temp=matrix(0,n[ii],p[ii])
-    diag(temp)=c(1,rep(0,min(n[ii],p[ii])-1))
+    temp2=min(n[ii],p[ii])
+    temp3=1/(sqrt(temp2))
+    diag(temp)=c(rep(temp3,temp2))
     temp
   })#initial value on manifold
   new("manifold",Y=Y,n=n,p=p,r=rep(0,length(n)),
