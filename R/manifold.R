@@ -134,7 +134,7 @@ setMethod("steepestDescent","manifold",
           definition=function(object){
             retractMethod=rep(0,length(object@n))
             for(i in 1:length(object@n)){
-              retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,qr=1,cayley=2,proj=3) 
+              retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,qr=1,cayley=2,proj=3,normal=1) 
             }
             .Call("steepestDescent",
                   object@Y,
@@ -152,7 +152,7 @@ setMethod("trustRegion","manifold",
           definition=function(object){
             retractMethod=rep(0,length(object@n))
             for(i in 1:length(object@n)){
-              retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,qr=1,cayley=2,proj=3) 
+              retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,qr=1,cayley=2,proj=3,normal=1) 
             }
             .Call("trustRegion",
                   object@Y,
@@ -170,7 +170,7 @@ setMethod("conjugateGradient","manifold",
           definition=function(object){
             retractMethod=rep(0,length(object@n))
             for(i in 1:length(object@n)){
-              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2,"proj"=3) 
+              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2,"proj"=3,"normal"=1) 
             }
             .Call("conjugateGradient",
                   object@Y,
@@ -187,7 +187,7 @@ setMethod("particleSwarm","manifold",
           definition=function(object){
             retractMethod=rep(0,length(object@n))
             for(i in 1:length(object@n)){
-              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2,"proj"=3) 
+              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2,"proj"=3,"normal"=1) 
             }
             .Call("particleSwarm",
                   object@Y,
