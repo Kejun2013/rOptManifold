@@ -25,9 +25,11 @@ problem["control","alpha"]=1
 problem["control","iterSubMax"]=1000
 problem["control","conjMethod"]=0
 problem["control","particleNum"]=10
+problem["control","conjMethod"]="FR"
 
-res=particleSwarm1(problem)
-res$optValue
+res=particleSwarm(problem)
+-res$optValue
+
 res$NumIter
 eigen(A)$values[1:2]%*%diag(N)
 
