@@ -71,7 +71,9 @@ public:
 //' Set initial particle swarm;
   virtual void set_particle ()=0;    
   
-  void set_Y(arma::mat Y_temp){Y=Y_temp;}
+  void set_Y(arma::mat Y_temp){
+    Y=Y_temp;
+  }
   
 
 virtual  void acceptY();

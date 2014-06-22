@@ -17,7 +17,7 @@ SetRetraction=function(object){
           object@retraction[i]="QR" 
         }
     }else if(object@mtype[i]=="sphere"){
-       if(!(retr %in% c("exp","Norm"))){
+       if(!(retr %in% c("exp","norm"))){
          cat(paste0("Component ",i,": ",object@mtype[i],
                         " retraction should be one of 'Exp', 'Norm'. 
                         Set to 'Norm' instead"))
@@ -57,8 +57,11 @@ SetRetraction=function(object){
     }else{
       stop(paste("Manifold Type Not Found:", object@mtype[i] ))
     }
-    retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,qr=1,cayley=2,proj=3,norm=1) 
+    retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,
+                                                     qr=1,cayley=2,
+                                                     proj=3,norm=1) 
   }
+  
   retractMethod
 }
 
@@ -82,9 +85,6 @@ setGeneric("trustRegion",function(object){standardGeneric("trustRegion")})
 setMethod("trustRegion","manifold",
           definition=function(object){
             retractMethod=SetRetraction(object)
-            for(i in 1:length(object@n)){
-              retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,qr=1,cayley=2,proj=3) 
-            }
             .Call("trustRegion",
                   object@Y,
                   object@n,object@p,object@r,
@@ -100,9 +100,6 @@ setGeneric("conjugateGradient",function(object){standardGeneric("conjugateGradie
 setMethod("conjugateGradient","manifold",
           definition=function(object){
             retractMethod=SetRetraction(object)
-            for(i in 1:length(object@n)){
-              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2,"proj"=3) 
-            }
             .Call("conjugateGradient",
                   object@Y,
                   object@n,object@p,object@r,
@@ -117,14 +114,11 @@ setGeneric("particleSwarm",function(object){standardGeneric("particleSwarm")})
 setMethod("particleSwarm","manifold",
           definition=function(object){
             retractMethod=SetRetraction(object)
-            for(i in 1:length(object@n)){
-              retractMethod[i]=switch(tolower(object@retraction[i]),"exp"=0,"qr"=1,"cayley"=2,"proj"=3) 
-            }
             .Call("particleSwarm",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,object@grad,
+                  object@obj,
                   object@control,
                   PACKAGE = "rOptManifold" )
           })

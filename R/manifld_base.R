@@ -27,7 +27,8 @@ setClass("manifold",
                                           theta=1,kappa=0.01,rhoMin=0.1,##trustRegion
                                           Delta0=0.5,DeltaMax=5,
                                           phi1=2,phi2=2,omega=1,##para particle swarm
-                                          particleNum=50,threadNum=4)
+                                          particleNum=50,
+                                          threadNum=parallel:::detectCores())
          )
 )
 

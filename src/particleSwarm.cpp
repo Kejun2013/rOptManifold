@@ -50,7 +50,7 @@ BEGIN_RCPP
   List YList(YList1), YList_temp(YList1);
   
   omp_set_num_threads(thread_num);
-  
+
 //  int dim=0;
 //  for(k=0;k<prodK;k++) dim+=n[k]+p[k];
 //  const int particle_num=dim; //dimension needs to be changed;
@@ -66,8 +66,6 @@ BEGIN_RCPP
   vector<double> objValue_p(particle_num,0.0), objValue_b(particle_num,0.0);
     
 
-  
-  
  //initiating particle_num size of particles and velocities;
   int outter_num;
   #pragma omp parallel for schedule(static) private(k) shared(manifoldYB, manifoldYG,manifoldYP,prodK)
@@ -109,9 +107,7 @@ BEGIN_RCPP
     }    
   } 
   
-  
 
-   
   //initialising the global-value position
   for(k=0;k<prodK;k++) YList[k]=manifoldYG[k]->get_Y();
   if(prodK>1){
@@ -150,7 +146,6 @@ BEGIN_RCPP
   double R01=0.5,R02=0.5;
   //int thread_num;
   //int subthread_num=0,subthread_num_1=0; //to test whether parallelism happens;
-
 
   //begin iteration  
   while(iter<iterMax){
