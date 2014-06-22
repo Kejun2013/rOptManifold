@@ -18,7 +18,7 @@ public:
   double evalHessian(const arma::mat &H,const arma::mat &Z);
   
   //New added
-  arma::mat genretract(double stepSize, const arma::mat &Z);
+ // arma::mat genretract(double stepSize, const arma::mat &Z);
   void vectorTrans();
   void update_conjugateD(double);
   void set_particle();

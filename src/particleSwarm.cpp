@@ -6,6 +6,7 @@
 #include "grassmannQ.h"
 #include "fixRank.h"
 #include "fixRankPSD.h"
+#include "fixRankSym.h"
 #include "spectahedron.h"
 #include "elliptope.h"
 #include "sphere.h"
@@ -22,31 +23,39 @@
 
 RcppExport SEXP  particleSwarm(SEXP YList1, SEXP n1, SEXP p1, SEXP r1,
                       SEXP mtype1,SEXP retraction1,
-                      SEXP f1, SEXP f2,
+                      SEXP f1, 
                       SEXP control1){
 BEGIN_RCPP
   //Initialization of functions and control parameters
   Function obej(f1);
-  Function grad(f2);
   List control(control1);
   IntegerVector retraction(retraction1);
   int iterMax=as< int>(control["iterMax"]);
   double phi1=as< double>(control["phi1"]);
   double phi2=as< double>(control["phi2"]);
   double omega=as< double>(control["omega"]);
+  //controlling parameter: number of particles and number of parallel threads
+  int particle_num=as< int>(control["particleNum"]);
+  int thread_num=as< int>(control["threadNum"]);
   //double alpha=as< double>(control["alpha"]); 
   
   // Initialization of Data points
   IntegerVector n(n1),p(p1),r(r1);
   CharacterVector mtype(mtype1);
   int prodK=n.size();// size of product manifold
+  
+  //global best position
   vector< manifold*>  manifoldYG;
   int k;
   List YList(YList1), YList_temp(YList1);
   
-  int dim=0;
-  for(k=0;k<prodK;k++) dim+=n[k]+p[k];
-  const int particle_num=dim; //dimension needs to be changed;
+  omp_set_num_threads(thread_num);
+  
+//  int dim=0;
+//  for(k=0;k<prodK;k++) dim+=n[k]+p[k];
+//  const int particle_num=dim; //dimension needs to be changed;
+
+//present and historical best postion of each particle
   vector< vector< manifold*> >  manifoldYP(particle_num), manifoldYB(particle_num);   
   
   
@@ -57,7 +66,7 @@ BEGIN_RCPP
   vector<double> objValue_p(particle_num,0.0), objValue_b(particle_num,0.0);
     
 
-  omp_set_num_threads(4);
+  
   
  //initiating particle_num size of particles and velocities;
   int outter_num;
@@ -152,36 +161,32 @@ BEGIN_RCPP
        firstprivate(velocity) \
        private(R01,R02,k) 
 { 
-
+ 
       #pragma omp for schedule(static)
         for(outter_num=0;outter_num<particle_num;outter_num++){
-          //if(omp_get_thread_num()==1) subthread_num_1++; //to test whether parallelism happens;
-          //thread_num=omp_get_num_threads();
           srand(int(time(NULL)) ^ omp_get_thread_num());
-          
+         //  List YList_parallel(prodK);
+           
+           //begin updating each component
             for(k=0;k<prodK;k++){
               R01=((double) rand() / (RAND_MAX+1));
               R02=((double) rand() / (RAND_MAX+1));
  
-			  //velocity update
+			         //velocity update
               velocity=omega*manifoldYP[outter_num][k]->get_descD();
               velocity+=phi1*R01*(manifoldYB[outter_num][k]->get_Y()-
                                    manifoldYP[outter_num][k]->get_Y());
               velocity+=phi2*R02*(manifoldYG[k]->get_Y()-
                                     manifoldYP[outter_num][k]->get_Y());
               
-			        
+			        //project onto tangent space
               manifoldYP[outter_num][k]->evalGradient(velocity,"particleSwarm");
              
-//             #pragma omp critical
-//             {
+
               manifoldYP[outter_num][k]->retract(1,"particleSwarm",true);
-//             }YList_temp[k]=
               manifoldYP[outter_num][k]->vectorTrans();
-              
-              //manifoldYP[outter_num][k]->set_conjugateD(velocity); 
               manifoldYP[outter_num][k]->acceptY();
-              
+              //YList_parallel[k]=manifoldYP[outter_num][k]->getY();
                      
             }//update each component
 

@@ -1,2 +1,22 @@
 useDynLib(rOptManifold)
-exportPattern("^[[:alpha:]]+")
+#exportPattern("^[[:alpha:]]+")
+
+exportClasses("manifold")
+
+exportMethods("*",
+              "steepestDescent",
+              "trustRegion",
+              "conjugateGradient",
+              "particleSwarm",
+              "setGradient<-",
+              "["
+              )
+
+export("fixedRank",
+       "fixedRankSym",
+       "fixedRankPSD",
+       "elliptope",
+       "spectahedron",
+       "stiefel",
+       "sphere",
+       "grassmanQ")

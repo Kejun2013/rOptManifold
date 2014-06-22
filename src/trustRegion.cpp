@@ -1,8 +1,8 @@
-
 #include "stiefel.h"
 #include "grassmannQ.h"
 #include "fixRank.h"
 #include "fixRankPSD.h"
+#include "fixRankSym.h"
 #include "spectahedron.h"
 #include "elliptope.h"
 #include "sphere.h"
@@ -68,7 +68,10 @@ BEGIN_RCPP
      }else if(typeTemp=="sphere"){
        manifoldY.push_back(new sphere(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
-     }    
+     }else if(typeTemp=="fixedRankSym"){
+       manifoldY.push_back(new fixRankSym(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }       
   }
     
   //define other varibles
@@ -77,7 +80,7 @@ BEGIN_RCPP
   
   //value of objective function, m function, related descent amount
   double objValue,objValue_temp,objValue_outer,objDesc,m_temp,mDesc;//,DeltaL;
-  double alpha,beta,rho, qA,qB,qC,tau,rrNorm0,rrNorm,
+  double alpha,beta,rho, qA,qB,qC,tau,rrNorm0,rrNorm,rrNormMax,
           etaNorm,etaNorm_new,hessQterm;
   //gradient, hessian of objective F in ambient space
   arma::mat gradF,hessianF, rr,dd,eta,eta_old,HZz;  ////////////////////////
@@ -93,6 +96,7 @@ BEGIN_RCPP
     objValue_outer=objValue;
     //gradient of objective funtion
     iter++;
+    rrNormMax=0;
     for(k=0;k<prodK;k++){
         if(prodK>1){
           gradF=as< arma::mat>(grad(YList,k+1));
@@ -107,6 +111,7 @@ BEGIN_RCPP
         rrNorm=manifoldY[k]->gradMetric();  //<r,r>_Y
         //rrNorm0: controlling stopping condition for the subproblem
         rrNorm0=rrNorm;
+        rrNormMax=max(rrNorm,rrNormMax);
         rrNorm0=rrNorm0*min(pow(rrNorm0,theta),kappa);
         etaNorm=0;
         //begin of inner loop: sub-problem
@@ -193,6 +198,7 @@ BEGIN_RCPP
     //if(tol> DeltaL) flag=false;
    //  DeltaL=(*max_element(Delta.begin(),Delta.end()));
     if(rho>rhoMin*1.05 && objDesc<tol) flag=false;
+    //if(rrNormMax<tol) flag=false;
   }// outer iteration
 
   return List::create(Named("optY")=YList,

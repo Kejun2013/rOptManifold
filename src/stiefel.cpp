@@ -54,25 +54,25 @@ arma::mat stiefel::retract(double stepSize, std::string method, bool first){
   return Yt;
 }
 
-
-
-
-arma::mat stiefel::genretract(double stepSize, const arma::mat &Z){
-  if(retraction==1){//QR retraction
-    Yt=Y+stepSize*Z;
-    arma::qr_econ(retract_Q,retract_R,Yt);
-    if(retract_R(0,0)<0){
-      retract_Q=-retract_Q;
-    }
-    Yt=retract_Q;
-  }else if(retraction==2){//cayley
-    arma::mat A=Y.t()*Z;  //another approach that z=YA+Y_annhilator*B;
-    arma::mat Omega=(Z-1/2*Y*A)*Y.t()-Y*(Z.t()-1/2*A.t()*Y.t());
-    Yt=arma::eye(n,n)-stepSize/2*Omega;
-    Yt=Yt.i()*(arma::eye(n,n)+stepSize/2*Omega)*Y;
-  }
-  return Yt;
-}
+//
+//
+//
+//arma::mat stiefel::genretract(double stepSize, const arma::mat &Z){
+//  if(retraction==1){//QR retraction
+//    Yt=Y+stepSize*Z;
+//    arma::qr_econ(retract_Q,retract_R,Yt);
+//    if(retract_R(0,0)<0){
+//      retract_Q=-retract_Q;
+//    }
+//    Yt=retract_Q;
+//  }else if(retraction==2){//cayley
+//    arma::mat A=Y.t()*Z;  //another approach that z=YA+Y_annhilator*B;
+//    arma::mat Omega=(Z-1/2*Y*A)*Y.t()-Y*(Z.t()-1/2*A.t()*Y.t());
+//    Yt=arma::eye(n,n)-stepSize/2*Omega;
+//    Yt=Yt.i()*(arma::eye(n,n)+stepSize/2*Omega)*Y;
+//  }
+//  return Yt;
+//}
 
 
 //vector transport of conjugate direction, from Y to Yt

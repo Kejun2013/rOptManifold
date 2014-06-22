@@ -3,9 +3,11 @@
 #include "grassmannQ.h"
 #include "fixRank.h"
 #include "fixRankPSD.h"
+#include "fixRankSym.h"
 #include "spectahedron.h"
 #include "elliptope.h"
 #include "sphere.h"
+
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is objective function; f2 is gradient function
 // iterMax: maximum number of iterations
@@ -23,6 +25,7 @@ BEGIN_RCPP
   List control(control1);
   IntegerVector retraction(retraction1);
   int iterMax=as< int>(control["iterMax"]);
+  int iterSubMax=as< int>(control["iterSubMax"]);
   double tol=as< double>(control["tol"]);
   double sigma=as< double>(control["sigma"]);
   double beta=as< double>(control["beta"]);
@@ -63,7 +66,10 @@ BEGIN_RCPP
      }else if(typeTemp=="sphere"){
        manifoldY.push_back(new sphere(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
-     }    
+     }else if(typeTemp=="fixedRankSym"){
+       manifoldY.push_back(new fixRankSym(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }     
 
   }
     
@@ -82,7 +88,6 @@ BEGIN_RCPP
   }else{
     objValue=as< double>(obej(YList[0]));
   }
-  
   //begin iteration
   while(iter<iterMax && flag){
     //gradient of objective funtion
@@ -113,7 +118,7 @@ BEGIN_RCPP
             objValue_temp=as< double>(obej(YList[0]));
           }
           first=false;
-        }while((objValue-objValue_temp)<eDescent && iterInner<1000);
+        }while((objValue-objValue_temp)<eDescent && iterInner<iterSubMax);
         //step size iteration
         //if a stepsize is accepted, update current location
         manifoldY[k]->acceptY();

@@ -34,10 +34,6 @@ double grassmannQ::evalHessian(const arma::mat &H, const arma::mat &Z){
 }
 
 
-arma::mat grassmannQ::genretract(double stepSize, const arma::mat &Z){
-//empty
-  return arma::eye(n,n);
-}
 
 void grassmannQ::vectorTrans(){
     //empty

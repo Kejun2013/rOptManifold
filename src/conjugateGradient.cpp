@@ -3,6 +3,7 @@
 #include "grassmannQ.h"
 #include "fixRank.h"
 #include "fixRankPSD.h"
+#include "fixRankSym.h"
 #include "spectahedron.h"
 #include "elliptope.h"
 #include "sphere.h"
@@ -77,7 +78,10 @@ BEGIN_RCPP
      }else if(typeTemp=="sphere"){
        manifoldY.push_back(new sphere(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
-     }    
+     }else if(typeTemp=="fixedRankSym"){
+       manifoldY.push_back(new fixRankSym(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }       
 
   }
     
@@ -183,8 +187,10 @@ BEGIN_RCPP
            eDescent[k]=ang_check;
            ang_check=ang_check/sqrt(gradNorm[k]);
            ang_check=ang_check/sqrt(manifoldY[k]->descDMetric());
-           //Rcpp::Rcout<<"ang"<<ang_check<<endl;
+           
            if(ang_check>(-0.05)){
+                Rcpp::Rcout<<"Iteration "<<iter<<":"<<endl;
+                Rcpp::Rcout<<"Conjugate Direction Reset To Steepest Descent!"<<endl;
                 manifoldY[k]->retrieve_steepest();
                 eDescent[k]=gradNorm[k];
            }
