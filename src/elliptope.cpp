@@ -4,11 +4,11 @@
 elliptope::elliptope(int n1, int p1, int r1, 
            Rcpp::NumericMatrix Y1,int retraction1):
            manifold(n1,p1,r1,Y1,retraction1){
-               Y=arma::mat(n,r,arma::fill::eye);
-               int i;
-               for(i=r;i<n;i++){
-                 Y(i,1)=1;
-               }
+//               Y=arma::mat(n,r,arma::fill::eye);
+//               int i;
+//               for(i=r;i<n;i++){
+//                 Y(i,1)=1;
+//               }
            }
 
 
@@ -95,5 +95,8 @@ void elliptope::update_conjugateD(double eta){
 }
 
 void elliptope::set_particle(){
-
+      Y=arma::randn(n,r);
+  arma::mat velocity_temp=arma::randn(n,r);
+  //psuedo gradient as velocity;
+  evalGradient(velocity_temp,"particleSwarm");
 }

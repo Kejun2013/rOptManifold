@@ -4,7 +4,7 @@
 fixRankPSD::fixRankPSD(int n1, int p1, int r1, 
            Rcpp::NumericMatrix Y1,int retraction1):
            manifold(n1,p1,r1,Y1,retraction1){
-               Y=arma::mat(n,r,arma::fill::eye);
+               //Y=arma::mat(n,r,arma::fill::eye);
            }
 
 
@@ -15,6 +15,8 @@ void fixRankPSD::evalGradient(arma::mat gradF,std::string method){
     if(method=="steepest"){
       eDescent=arma::dot(gradF,xi);
       descD=-xi;
+    }else if(method=="particleSwarm"){
+      descD=xi;
     }
 }
 
@@ -44,18 +46,6 @@ arma::mat fixRankPSD::retract(double stepSize, std::string method,
 
 
 
-//void fixRankPSD::acceptY(){
-//  Y=Yt;
-//}
-
-
-// void fixRankPSD::set_descD(arma::mat xi_temp){
-//descD=xi_temp;
-//}
-//
-
-
-
 //vector transport of conjugate direction(update descent direction)
 //from Y to Yt, evaluated before accept Y
 
@@ -74,5 +64,8 @@ void fixRankPSD::update_conjugateD(double eta){
 }
 
 void fixRankPSD::set_particle(){
-
+    Y=arma::randn(n,r);
+  arma::mat velocity_temp=arma::randn(n,r);
+  //psuedo gradient as velocity;
+  evalGradient(velocity_temp,"particleSwarm");
 }

@@ -39,18 +39,21 @@ problem["grad"]=function(X){
 }
 
 #set control parameters and the retraction method of sphere manifold
-problem["retraction"]="Exp"
+
 problem["control","tol"]=0.01
 problem["control","Delta0"]=5
 problem["control","DeltaMax"]=10
 problem["control","rhoMin"]=0.01
-problem["control","iterMax"]=1000
-problem["control","alpha"]=1
-problem["control","iterSubMax"]=1000
-problem["control","conjMethod"]="FR"
-problem["control","particleNum"]=200
-problem["control","threadNum"]=1
 
+problem["control","alpha"]=1
+problem["control","iterSubMax"]=1
+problem["control","conjMethod"]="FR"
+
+problem["control","threadNum"]=4
+
+problem["control","particleNum"]=1000
+problem["control","iterMax"]=100
+problem["retraction"]="Exp"
 #res<-steepestDescent(problem)
 ptm <- proc.time()
 res<-particleSwarm(problem)
