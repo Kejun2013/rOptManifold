@@ -47,9 +47,18 @@ arma::mat stiefel::retract(double stepSize, std::string method, bool first){
     Yt=retract_Q;
   }else if(retraction==2){//Cayley
     //Rcpp::Rcout<<"Cayley"<<endl;
-    arma::mat Omega=-Y.t()*descD;
-    arma::mat temp=arma::eye(p,p)-stepSize/2*Omega;
-    Yt=Y*temp.i()*(arma::eye(p,p)+stepSize/2*Omega);
+    // enve if we don't change metric, this retraction still works
+    arma::mat A=Y.t()*descD;  //another approach that descD=YA+(Y_annhilator)*B;
+    // Looking for z=1/2YA+(Y_annhilator)*B;
+    arma::mat z=descD-1/2*Y*A;
+    // Then Omega=z*Y.t()-Y*z.t()
+    arma::mat Omega=z*Y.t()-Y*z.t();
+    Yt=arma::eye(n,n)-stepSize/2*Omega;
+    Yt=Yt.i()*(arma::eye(n,n)+stepSize/2*Omega)*Y; 
+//  The following def cannot result in correct answers;    
+//    arma::mat Omega=-Y.t()*descD;
+//    arma::mat temp=arma::eye(p,p)-stepSize/2*Omega;
+//    Yt=Y*temp.i()*(arma::eye(p,p)+stepSize/2*Omega);
   }
   return Yt;
 }
