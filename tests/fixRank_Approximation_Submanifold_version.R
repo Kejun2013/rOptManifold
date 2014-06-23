@@ -5,7 +5,7 @@ A=matrix(runif(nn*rr),nn,rr)
 A=A%*%t(A)
 
 #add noise
-B=A#+matrix(rnorm(nn*rr,sd=0.05),nn,nn)
+B=A+matrix(rnorm(nn*rr,sd=0.05),nn,nn)
 
 problem=fixedRankSym(n=nn,r=rr)
 problem["obj"]=function(X){
@@ -19,19 +19,25 @@ problem["grad"]=function(X){
 problem["hessian"]=function(X,Z){
   2*Z
 }
-problem["retraction"]="proj"
+problem["retraction"]="exp"
 problem["control","tol"]=0.01
-problem["control","Delta0"]=0.5
+problem["control","Delta0"]=3
 problem["control","DeltaMax"]=10
-problem["control","rhoMin"]=0.05
+problem["control","rhoMin"]=0.01
 problem["control","iterMax"]=1000
-problem["control","alpha"]=10
-problem["control","iterSubMax"]=100
+problem["control","alpha"]=3
+problem["control","iterSubMax"]=1000
 problem["control","conjMethod"]="PR"
+problem["control","threadNum"]=1
+problem["control","particleNum"]=200
+problem["control","omega"]=0.8
+problem["control","phi1"]=0.2
+problem["control","phi2"]=0.8
 
-res=trustRegion(problem)
+#res=trustRegion(problem)
 res=steepestDescent(problem)
-res=conjugateGradient(problem)
+#res=conjugateGradient(problem)
+#res=particleSwarm(problem)
 res$optValue
 res$NumIter
 

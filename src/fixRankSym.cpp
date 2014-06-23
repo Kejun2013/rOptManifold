@@ -30,6 +30,10 @@ void fixRankSym::evalGradient(arma::mat gradF,std::string method){
       Vp_desc=-Vp;
     }else if(method=="trustRegion"){
       xi_normal=gradF-xi;
+    }else if(method=="particleSwarm"){
+      descD=xi;
+      M_desc=M;
+      Vp_desc=Vp;
     }
 }
 
@@ -130,12 +134,13 @@ void fixRankSym::update_conjugateD(double eta){
 }
 
 void fixRankSym::set_particle(){
-//  arma::mat y_temp=arma::randn(n,p);
-//  arma::mat Q,R;
-//  arma::qr_econ(Q,R,y_temp);
-//  Y=Q;
-//  arma::mat velocity_temp=arma::randn(n,p);
-//  //psedo gradient as velocity;
-//  evalGradient(velocity_temp,"steepest");
-//  conjugateD=xi;
+  V=arma::randn(n,r);
+  arma::mat Q,R;
+  arma::qr_econ(Q,R,V);
+  V=Q;
+  Sigma=arma::vec(r,arma::fill::ones);
+    Y=V*arma::diagmat(Sigma)*V.t();
+  //////////////////
+  arma::mat velocity_temp=arma::randn(n,n);
+  evalGradient(velocity_temp,"steepest");
 }

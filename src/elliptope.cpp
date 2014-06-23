@@ -22,8 +22,10 @@ void elliptope::evalGradient(arma::mat gradF,std::string method){
     if(method=="steepest"){
       descD=-xi;
       eDescent=arma::dot(xi,gradF);
-    }else{
+    }else if(method=="trustRegion"){
       eGrad=gradF;//storage for hessian
+    }else if(method=="particleSwarm"){
+      descD=xi;
     }
 }
 
@@ -64,6 +66,9 @@ arma::mat elliptope::retract(double stepSize, std::string method,
     Yt=(arma::cos(stepSize*retract_a)*mRepeat)%Y+
           (1/stepSize*arma::pow(retract_a,-1))%
           (arma::sin(stepSize*retract_a)*mRepeat)%xi;
+//    arma::colvec  normCol=arma::sum(Yt%Yt,1);
+//    normCol=arma::pow(normCol,-0.5);
+//    Yt=(normCol*arma::mat(1,r,arma::fill::ones))%Yt;
   }else{//projection
     Yt=Y+stepSize*descD;
     retract_a=arma::sum(Yt%Yt,1);
@@ -95,8 +100,11 @@ void elliptope::update_conjugateD(double eta){
 }
 
 void elliptope::set_particle(){
-      Y=arma::randn(n,r);
-  arma::mat velocity_temp=arma::randn(n,r);
+  Y=arma::randn(n,r);
+  arma::colvec  normCol=arma::sum(Y%Y,1);
+  normCol=arma::pow(normCol,-0.5);
+  Y=(normCol*arma::mat(1,r,arma::fill::ones))%Y;
   //psuedo gradient as velocity;
+   arma::mat velocity_temp=arma::randn(n,r);
   evalGradient(velocity_temp,"particleSwarm");
 }

@@ -26,20 +26,28 @@ problem["hessian"]=function(X,Z){
 
 
 
-problem["control","tol"]=0.00001
+problem["control","tol"]=0.001
 problem["control","Delta0"]=10
 problem["control","DeltaMax"]=20
 problem["control","rhoMin"]=0.05
-problem["control","iterMax"]=1000
+problem["control","iterMax"]=1500
 problem["control","iterSubMax"]=1000
 problem["control","conjMethod"]="FR"
-problem["control","alpha"]=0.05
+problem["control","alpha"]=1
 problem["control","sigma"]=0.01
-#res=steepestDescent(problem)
+problem["control","threadNum"]=1
+problem["control","particleNum"]=900
+problem["control","omega"]=0.8
+problem["control","phi1"]=0.2
+problem["control","phi2"]=0.8
+res=steepestDescent(problem)
 #res=trustRegion(problem)
-res=conjugateGradient(problem)
+
+#res=conjugateGradient(problem)
+
+#res=particleSwarm(problem)
 res$optValue
 res$NumIter
  temp=res$optY[[1]]-lowR
- sum((temp[!mask])^2)
+ max((temp[!mask])^2)
 

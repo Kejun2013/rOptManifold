@@ -130,7 +130,7 @@ fixedRankPSD<-function(n,r,retraction="Proj"){
     diag(1,n[ii],r[ii])
   })#initial value on manifold
   mtype=rep("fixedRankPSD",length(n))
-  object=new("manifold",Y=Y,n=n,p=n,r=r,
+  object=new("manifold",Y=Y,n=n,p=r,r=r,
       retraction=retraction,mtype=mtype)
   outputMessage(n,n,r,mtype)
   object
@@ -143,7 +143,7 @@ spectahedron<-function(n,r,retraction="Proj"){
     temp=diag(1/r[ii],n[ii],r[ii])
   })#initial value on manifold
   mtype=rep("spectahedron",length(n))
-  object=new("manifold",Y=Y,n=n,p=n,r=r,
+  object=new("manifold",Y=Y,n=n,p=r,r=r,
       retraction=retraction,mtype=mtype)
   outputMessage(n,n,r,mtype)
   object
@@ -159,7 +159,7 @@ elliptope<-function(n,r,retraction="Proj"){
     temp
   })#initial value on manifold
   mtype=rep("elliptope",length(n))
-  object=new("manifold",Y=Y,n=n,p=n,r=r,
+  object=new("manifold",Y=Y,n=n,p=r,r=r,
       retraction=retraction,mtype=mtype)
   outputMessage(n,n,r,mtype)
   object

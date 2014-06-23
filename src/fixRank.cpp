@@ -33,6 +33,11 @@ void fixRank::evalGradient(arma::mat gradF,std::string method){
     }else if(method=="trustRegion"){
       //xi_normal=gradF-U*Ru-Rv*V.t()+U*M*V.t();
       xi_normal=gradF-xi;
+    }else if(method=="particleSwarm"){
+      descD=xi;
+      M_desc=M;
+      Up_desc=Up;
+      Vp_desc=Vp;
     }
 }
 
@@ -74,18 +79,24 @@ double fixRank::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 arma::mat fixRank::retract(double stepSize, std::string method,bool first){
   arma::mat S,Us,Vs;
   arma::vec Sigma_s;
+  bool conv;
+  Yt=Y;
   if(first){
-    arma::qr_econ(Qu,Ru,Up_desc);
-    arma::qr_econ(Qv,Rv,Vp_desc);
+    conv=arma::qr_econ(Qu,Ru,Up_desc);
+    if(!conv) return Y;
+    conv=arma::qr_econ(Qv,Rv,Vp_desc);
+    if(!conv) return Y;
   }
   S=arma::mat(2*r,2*r,arma::fill::zeros);
   S(arma::span(0,r-1),arma::span(0,r-1))=arma::diagmat(Sigma)+M_desc*stepSize;
   S(arma::span(r,2*r-1),arma::span(0,r-1))=Ru*stepSize;
   S(arma::span(0,r-1),arma::span(r,2*r-1))=Rv.t()*stepSize; 
-  arma::svd_econ(Us,Sigma_s,Vs,S);
+  conv=arma::svd_econ(Us,Sigma_s,Vs,S);
+  if(!conv) return Y;
   Sigma_t=Sigma_s(arma::span(0,r-1));
   Ut=U*Us(arma::span(0,r-1),arma::span(0,r-1))+Qu*Us(arma::span(r,2*r-1),arma::span(0,r-1));
   Vt=V*Vs(arma::span(0,r-1),arma::span(0,r-1))+Qv*Vs(arma::span(r,2*r-1),arma::span(0,r-1));
+  
   Yt=Ut*arma::diagmat(Sigma_t)*Vt.t();
   return Yt;
 }
@@ -134,13 +145,17 @@ void fixRank::update_conjugateD(double eta){
   Vp_desc=Vp_desc*eta-Vp;
 }
 
-void fixRank::set_particle(){
-//  arma::mat y_temp=arma::randn(n,p);
-//  arma::mat Q,R;
-//  arma::qr_econ(Q,R,y_temp);
-//  Y=Q;
-//  arma::mat velocity_temp=arma::randn(n,p);
-//  //psedo gradient as velocity;
-//  evalGradient(velocity_temp,"steepest");
-//  conjugateD=xi;
+void fixRank::set_particle(){ 
+  U=arma::randn(n,r);
+  V=arma::randn(p,r);
+  arma::mat Q,R;
+  arma::qr_econ(Q,R,U);
+  U=Q;
+  arma::qr_econ(Q,R,V);
+  V=Q;
+  Sigma=arma::vec(r,arma::fill::ones);
+  Y=U*arma::diagmat(Sigma)*V.t();
+  //////////////////
+  arma::mat velocity_temp=arma::randn(n,p);
+  evalGradient(velocity_temp,"steepest");
 }

@@ -5,7 +5,7 @@ A=matrix(runif(nn*rr),nn,rr)
 A=A%*%t(A)
 
 #add noise
-B=A#+matrix(rnorm(nn*rr,sd=0.05),nn,nn)
+B=A+matrix(rnorm(nn*rr,sd=0.05),nn,nn)
 
 problem=fixedRankPSD(n=nn,r=rr)
 #problem=spectahedron(n=nn,p=nn,r=rr)
@@ -28,12 +28,18 @@ problem["control","DeltaMax"]=5
 problem["control","rhoMin"]=0.01
 problem["control","iterMax"]=1000
 problem["control","alpha"]=1
-problem["control","iterSubMax"]=1000
+problem["control","iterSubMax"]=2000
 problem["control","conjMethod"]="PR"
+problem["control","threadNum"]=1
+problem["control","particleNum"]=800
+problem["control","omega"]=0.9
+problem["control","phi1"]=2
+problem["control","phi2"]=2
 
-res=trustRegion(problem)
+#res=trustRegion(problem)
 res=steepestDescent(problem)
-res=conjugateGradient(problem)
+#res=conjugateGradient(problem)
+#res=particleSwarm(problem)
 res$optValue
 res$NumIter
 

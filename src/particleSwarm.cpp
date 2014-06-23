@@ -90,10 +90,42 @@ BEGIN_RCPP
           if(outter_num==0)  manifoldYG.push_back(new grassmannQ(n[k],p[k],r[k],
                                                      yTemp,retraction[k]));                                     
        }else if(typeTemp=="fixedRank"){
-       
+           manifoldYP[outter_num].push_back(new fixRank(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+           manifoldYB[outter_num].push_back(new fixRank(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new fixRank(n[k],p[k],r[k],
+                                                     yTemp,retraction[k]));    
 
-       }
-       else if(typeTemp=="sphere"){
+       }else if(typeTemp=="fixedRankSym"){
+           manifoldYP[outter_num].push_back(new fixRankSym(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+           manifoldYB[outter_num].push_back(new fixRankSym(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new fixRankSym(n[k],p[k],r[k],
+                                                     yTemp,retraction[k]));
+       }else if(typeTemp=="fixedRankPSD"){
+           manifoldYP[outter_num].push_back(new fixRankPSD(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+           manifoldYB[outter_num].push_back(new fixRankPSD(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new fixRankPSD(n[k],p[k],r[k],
+                                                     yTemp,retraction[k]));
+      }else if(typeTemp=="spectahedron"){
+           manifoldYP[outter_num].push_back(new spectahedron(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+           manifoldYB[outter_num].push_back(new spectahedron(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new spectahedron(n[k],p[k],r[k],
+                                                     yTemp,retraction[k]));
+      }else if(typeTemp=="elliptope"){
+           manifoldYP[outter_num].push_back(new elliptope(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+           manifoldYB[outter_num].push_back(new elliptope(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new elliptope(n[k],p[k],r[k],
+                                                     yTemp,retraction[k]));
+      }else if(typeTemp=="sphere"){
          manifoldYP[outter_num].push_back(new sphere(n[k],p[k],r[k],
                                     yTemp,retraction[k]));
          manifoldYB[outter_num].push_back(new sphere(n[k],p[k],r[k],
@@ -126,7 +158,7 @@ BEGIN_RCPP
       }
       if(objValue_b[outter_num]<best_objValue) {
         best_objValue=objValue_b[outter_num];
-		best_pos=outter_num;
+	     	best_pos=outter_num;
       }  
   }
   
@@ -173,14 +205,16 @@ BEGIN_RCPP
                                    manifoldYP[outter_num][k]->get_Y());
               velocity+=phi2*R02*(manifoldYG[k]->get_Y()-
                                     manifoldYP[outter_num][k]->get_Y());
-              
+             // Rcpp::Rcout<<1<<endl;
 			        //project onto tangent space
               manifoldYP[outter_num][k]->evalGradient(velocity,"particleSwarm");
-             
-
+             //Rcpp::Rcout<<2<<endl;
               manifoldYP[outter_num][k]->retract(1,"particleSwarm",true);
+              //Rcpp::Rcout<<3<<endl;
               manifoldYP[outter_num][k]->vectorTrans();
+              //Rcpp::Rcout<<4<<endl;
               manifoldYP[outter_num][k]->acceptY();
+              //Rcpp::Rcout<<5<<endl;
               //YList_parallel[k]=manifoldYP[outter_num][k]->getY();
                      
             }//update each component

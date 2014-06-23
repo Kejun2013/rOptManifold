@@ -10,7 +10,7 @@ Sigma=cov(t(Y))
 ##tuning parameter
 rho=0.1
 
-problem=spectahedron(n=pp,p=pp,r=rr)
+problem=spectahedron(n=pp,r=rr)
 #problem=elliptope(n=nn,p=nn,r=rr)
 problem["obj"]=function(X){
   XXt=X%*%t(X)
@@ -31,21 +31,30 @@ problem["hessian"]=function(X,Z){
   eucH
 }
 problem["retraction"]="proj"
-problem["control","tol"]=0.0001
+problem["control","tol"]=0.01
 problem["control","Delta0"]=10
 problem["control","DeltaMax"]=10
 problem["control","rhoMin"]=0.2
-problem["control","iterMax"]=1000
+problem["control","iterMax"]=500
 problem["control","alpha"]=2
 problem["control","iterSubMax"]=1000
 problem["control","conjMethod"]="PR"
+problem["control","threadNum"]=1
+problem["control","particleNum"]=200
+problem["control","omega"]=0.8
+problem["control","phi1"]=1
+problem["control","phi2"]=1.5
 
-res=trustRegion(problem)
-res=steepestDescent(problem)
-res=conjugateGradient(problem)
+#res=trustRegion(problem)
+#res=steepestDescent(problem)
+#res=conjugateGradient(problem)
+res=particleSwarm(problem)
 res$NumIter
 res$optValue
 pcaHat=res$optY[[1]]
-pcaHat[abs(pcaHat)<0.05]=0
+sum(pcaHat^2)
+pcaHat[abs(pcaHat)<0.01]=0
 pcaHat[1:10]
 pca1[1:10]
+
+

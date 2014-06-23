@@ -17,8 +17,10 @@ void spectahedron::evalGradient(arma::mat gradF,std::string method){
     if(method=="steepest"){
       eDescent=arma::dot(gradF,xi);
       descD=-xi;
-    }else{
+    }else if(method=="trustRegion"){
       eGrad=gradF;
+    }else if(method=="particleSwarm"){
+      descD=xi;
     }
 }
 
@@ -51,6 +53,7 @@ arma::mat spectahedron::retract(double stepSize, std::string method,
       retract_a=arma::norm(descD,"fro");
     }
     Yt=cos(stepSize*retract_a)*Y+sin(stepSize*retract_a)*descD/retract_a;
+    //Yt=Yt/arma::norm(Yt,"fro");
   }else{//projection
     Yt=Y+stepSize*descD;
     retract_a=arma::norm(Yt,"fro");
@@ -59,16 +62,6 @@ arma::mat spectahedron::retract(double stepSize, std::string method,
   return Yt;
 }
 
-
-
-//void spectahedron::acceptY(){
-//  Y=Yt;
-//}
-//
-//
-// void spectahedron::set_descD(arma::mat xi_temp){
-//xi=xi_temp;
-//}
 
 
 
@@ -92,5 +85,10 @@ void spectahedron::update_conjugateD(double eta){
 }
 
 void spectahedron::set_particle(){
-
+  Y=arma::randn(n,r);
+  double normTemp=arma::norm(Y,"fro");
+  Y=Y/normTemp;
+  //psuedo gradient as velocity;
+   arma::mat velocity_temp=arma::randn(n,r);
+  evalGradient(velocity_temp,"particleSwarm");
 }
