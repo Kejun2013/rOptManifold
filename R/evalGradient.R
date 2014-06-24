@@ -3,14 +3,6 @@
 #They also provide function to check consistency of user-specified functions
 
 
-setGeneric("checkGradient",function(object){standardGeneric("trustRegion")})
-setMethod("checkGradient","manifold",
-          definition=function(object){
-            if(is.null(object@obj)) steop("The objective function cound not be NULL.")
-            if(is.null(object@grad)) steop("The gradient function cound not be NULL.")
-            checkGradient2(object)
-          })
-
 checkGradient2=function(object){
   n=object@n
   p=object@p
@@ -35,14 +27,6 @@ numericalGradient<-function(objF,Y,n,p){
   numGrad
 }
 
-
-setGeneric("checkHessian",function(object){standardGeneric("trustRegion")})
-setMethod("checkHessian","manifold",
-          definition=function(object){
-            if(is.null(object@obj)) steop("The objective function cound not be NULL.")
-            if(is.null(object@hessian)) steop("The hessian function cound not be NULL.")
-            checkHessian2(object)
-          })
 
 checkHessian2=function(object){
   n=object@n

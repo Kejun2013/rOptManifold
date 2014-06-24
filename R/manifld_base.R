@@ -87,6 +87,27 @@ setMethod("*",signature(e1="manifold",e2="manifold"),
 
 
 
+setGeneric("checkGradient",function(object){standardGeneric("checkGradient")})
+setMethod("checkGradient","manifold",
+          definition=function(object){
+            if(is.null(object@obj)) steop("The objective function cound not be NULL.")
+            if(is.null(object@grad)) steop("The gradient function cound not be NULL.")
+            checkGradient2(object)
+          })
+
+
+
+
+setGeneric("checkHessian",function(object){standardGeneric("checkHessian")})
+setMethod("checkHessian","manifold",
+          definition=function(object){
+            if(is.null(object@obj)) steop("The objective function cound not be NULL.")
+            if(is.null(object@hessian)) steop("The hessian function cound not be NULL.")
+            checkHessian2(object)
+          })
+
+
+
 # 
 # setMethod("show","manifold",
 #           function(object){

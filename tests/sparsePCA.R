@@ -8,7 +8,7 @@ Y=pca1%*%matrix(rnorm(nn,0,5),nrow=1)+matrix(rnorm(pp*nn,0,0.5),nrow=pp)
 Sigma=cov(t(Y))
 
 ##tuning parameter
-rho=0.1
+rho=0.2
 
 problem=spectahedron(n=pp,r=rr)
 #problem=elliptope(n=nn,p=nn,r=rr)
@@ -19,14 +19,14 @@ problem["obj"]=function(X){
 }
 #set gradient function
 problem["grad"]=function(X){
-  sparsity=X/(sqrt(X^2+0.01))
+  sparsity=X/(sqrt(X^2+0.005))
   gradF=-2*Sigma%*%X+rho*sparsity
   gradF
 }
 #set hessian function
 problem["hessian"]=function(X,Z){
-  sparsity1=Z/(sqrt(X^2+0.001))
-  sparsity2=X^2*sparsity1/(X^2+0.001)
+  sparsity1=Z/(sqrt(X^2+0.005))
+  sparsity2=X^2*sparsity1/(X^2+0.005)
   eucH=-2*Sigma%*%Z+rho*sparsity1-rho*sparsity2
   eucH
 }
@@ -45,15 +45,16 @@ problem["control","omega"]=0.8
 problem["control","phi1"]=1
 problem["control","phi2"]=1.5
 
-res=trustRegion(problem)
-#res=steepestDescent(problem)
+#res=trustRegion(problem)
+res=steepestDescent(problem)
 #res=conjugateGradient(problem)
 #res=particleSwarm(problem)
 res$NumIter
 res$optValue
 pcaHat=res$optY[[1]]
 sum(pcaHat^2)
-pcaHat[abs(pcaHat)<0.01]=0
+pcaHat[abs(pcaHat)<0.05]=0
+sum(abs(pcaHat)>0)
 pcaHat[1:10]
 pca1[1:10]
 

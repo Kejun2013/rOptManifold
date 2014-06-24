@@ -8,8 +8,6 @@ A=A%*%t(A)
 B=A+matrix(rnorm(nn*rr,sd=0.05),nn,nn)
 
 problem=fixedRankPSD(n=nn,r=rr)
-#problem=spectahedron(n=nn,p=nn,r=rr)
-#problem=elliptope(n=nn,p=nn,r=rr)
 problem["obj"]=function(X){
   sum((B-X%*%t(X))^2)
 }
