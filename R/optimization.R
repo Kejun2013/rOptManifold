@@ -72,6 +72,9 @@ SetRetraction=function(object){
 }
 
 
+
+
+
 setGeneric("steepestDescent",function(object){standardGeneric("steepestDescent")})
 setMethod("steepestDescent","manifold",
           definition=function(object){

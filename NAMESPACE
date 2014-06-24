@@ -9,7 +9,9 @@ exportMethods("*",
               "conjugateGradient",
               "particleSwarm",
               "setGradient<-",
-              "["
+              "[",
+              "checkGradient",
+              "checkHessian"
               )
 
 export("fixedRank",

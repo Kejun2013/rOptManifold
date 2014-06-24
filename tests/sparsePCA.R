@@ -45,10 +45,10 @@ problem["control","omega"]=0.8
 problem["control","phi1"]=1
 problem["control","phi2"]=1.5
 
-#res=trustRegion(problem)
+res=trustRegion(problem)
 #res=steepestDescent(problem)
 #res=conjugateGradient(problem)
-res=particleSwarm(problem)
+#res=particleSwarm(problem)
 res$NumIter
 res$optValue
 pcaHat=res$optY[[1]]
