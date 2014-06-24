@@ -1,9 +1,9 @@
 ######################################################################################
 ###This is an example to use rOptManifold package to optimize the object function:  ##
-###det(B+X'AX), where A is symmetirc, with contraint trace(X'X)=1. We use the class ##
+###det(B+X'AX), where A is symmetirc, with constraint trace(X'X)=1. We use the class ##
 ###of sphere manifold. That is equivalent to letting function be -det(B+X'AX) then  ##
 ###find the minimizer.          ######################################################
-###We use steepestDescent solver to get the optimizer and optimal value.##############
+###We use several solver to get the optimizer and optimal value.##############
 ######################################################################################
 
 set.seed(88)
@@ -46,18 +46,23 @@ problem["control","DeltaMax"]=10
 problem["control","rhoMin"]=0.01
 
 problem["control","alpha"]=1
-problem["control","iterSubMax"]=1
+problem["control","iterSubMax"]=100
 problem["control","conjMethod"]="FR"
 
 problem["control","threadNum"]=4
 
-problem["control","particleNum"]=1000
-problem["control","iterMax"]=100
+problem["control","particleNum"]=100
+problem["control","iterMax"]=1000
 problem["retraction"]="Exp"
-#res<-steepestDescent(problem)
 ptm <- proc.time()
-res<-particleSwarm(problem)
-proc.time() - ptm
-#res<-conjugateGradient(problem)
+res<-steepestDescent(problem)
+ptm2 <- proc.time()
+#res<-particleSwarm(problem)
+
+res2<-conjugateGradient(problem)
+proc.time() - ptm2
+ptm2 - ptm
+
 res$optValue
-sum(res$optY[[1]]^2)
+res2$optValue
+#sum(res$optY[[1]]^2)

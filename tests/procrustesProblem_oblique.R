@@ -1,9 +1,9 @@
 
 ######################################################################################
 ###This is an example to use rOptManifold package to optimize the procrustes problem:  
-###-||AX-B||^2, with contraint diag(X'X)=I_p, i.e. the classof oblique manifold.         
+###-||AX-B||^2, with contraint diag(X'X)=I_p, i.e. the class of oblique manifold.         
 ###We use steepestDescent solver to get the optimizer and optimal value, and then 
-###test that the gradient of submanifold at the local minimal point is truely zero.
+###test that the gradient of submanifold at the local minimal point is truly zero.
 ######################################################################################
 
 set.seed(64)
