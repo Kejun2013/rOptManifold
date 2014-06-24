@@ -165,3 +165,15 @@ elliptope<-function(n,r,retraction="Proj"){
   object
 }
 
+oblique<-function(n,p,retraction="Norm"){
+  retraction=BasicCheck(n,p,NULL,retraction)
+  Y=lapply(1:length(n),function(ii){
+    diag(1,n[ii],p[ii])
+  })#initial value on manifold
+  mtype=rep("oblique",length(n))
+  
+  object=new("manifold",Y=Y,n=n,p=p,r=rep(0,length(n)),
+             retraction=retraction,mtype=mtype)
+  outputMessage(n,p,NULL,mtype)
+  object
+}

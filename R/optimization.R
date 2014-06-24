@@ -52,8 +52,14 @@ SetRetraction=function(object){
         object@retraction[i]="Proj" 
       }
     }
+    
     else if(object@mtype[i]=="oblique"){
-      
+      if(!(retr %in% c("norm"))){
+        cat(paste0("Component ",i,": ",object@mtype[i],
+                   " retraction should be  'Norm'. 
+                   Set to 'Norm' instead"))
+        object@retraction[i]="Norm" 
+      }
     }else{
       stop(paste("Manifold Type Not Found:", object@mtype[i] ))
     }

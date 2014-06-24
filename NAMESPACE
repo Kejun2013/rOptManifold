@@ -19,4 +19,5 @@ export("fixedRank",
        "spectahedron",
        "stiefel",
        "sphere",
-       "grassmanQ")
+       "grassmanQ",
+       "oblique")
