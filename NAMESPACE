@@ -22,4 +22,6 @@ export("fixedRank",
        "stiefel",
        "sphere",
        "grassmanQ",
-       "oblique")
+       "oblique",
+       "specialLinear",
+       "projective")

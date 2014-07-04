@@ -60,7 +60,22 @@ SetRetraction=function(object){
                    Set to 'Norm' instead"))
         object@retraction[i]="Norm" 
       }
-    }else{
+    }else if(object@mtype[i]=="specialLinear"){
+      if(!(retr %in% c("exp","norm"))){
+        cat(paste0("Component ",i,": ",object@mtype[i],
+                   " retraction should be one of 'Exp', 'Norm'. 
+                   Set to 'Norm' instead"))
+        object@retraction[i]="Norm" 
+      }
+    }else if(object@mtype[i]=="Norm"){
+      if(!(retr %in% c("norm"))){
+        cat(paste0("Component ",i,": ",object@mtype[i],
+                   " retraction should be  'Norm'. 
+                   Set to 'Norm' instead"))
+        object@retraction[i]="Norm" 
+      }
+    }
+    else{
       stop(paste("Manifold Type Not Found:", object@mtype[i] ))
     }
     retractMethod[i]=switch(tolower(object@retraction[i]),exp=0,

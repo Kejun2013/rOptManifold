@@ -11,6 +11,8 @@
 #include "elliptope.h"
 #include "sphere.h"
 #include "oblique.h"
+#include "specialLinear.h"
+#include "projective.h"
 
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is objective function; f2 is gradient function
@@ -141,7 +143,23 @@ BEGIN_RCPP
                                     yTemp,retraction[k]));     
           if(outter_num==0)  manifoldYG.push_back(new oblique(n[k],p[k],r[k],
                                                      yTemp,retraction[k])); 
-       }       
+       }  
+       else if(typeTemp=="specialLinear"){
+         manifoldYP[outter_num].push_back(new specialLinear(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+         manifoldYB[outter_num].push_back(new specialLinear(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new specialLinear(n[k],p[k],r[k],
+                                                     yTemp,retraction[k])); 
+       }
+       else if(typeTemp=="projective"){
+         manifoldYP[outter_num].push_back(new projective(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+         manifoldYB[outter_num].push_back(new projective(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new projective(n[k],p[k],r[k],
+                                                     yTemp,retraction[k])); 
+       }
        manifoldYP[outter_num][k]->set_particle();  
        *manifoldYB[outter_num][k]=*manifoldYP[outter_num][k];  
      //  if(outter_num==0)  *manifoldYG[k]=*manifoldYP[outter_num][k];
