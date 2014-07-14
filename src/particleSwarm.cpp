@@ -4,6 +4,7 @@
 
 #include "stiefel.h"
 #include "grassmannQ.h"
+#include "grassmannSub.h"
 #include "fixRank.h"
 #include "fixRankPSD.h"
 #include "fixRankSym.h"
@@ -90,7 +91,14 @@ BEGIN_RCPP
                                     yTemp,retraction[k]));     
           if(outter_num==0)  manifoldYG.push_back(new grassmannQ(n[k],p[k],r[k],
                                                      yTemp,retraction[k]));                                     
-       }else if(typeTemp=="fixedRank"){
+       }else if(typeTemp=="grassmannSub"){
+         manifoldYP[outter_num].push_back(new grassmannSub(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));
+         manifoldYB[outter_num].push_back(new grassmannSub(n[k],p[k],r[k],
+                                    yTemp,retraction[k]));     
+          if(outter_num==0)  manifoldYG.push_back(new grassmannSub(n[k],p[k],r[k],
+                                                     yTemp,retraction[k]));  
+     }else if(typeTemp=="fixedRank"){
            manifoldYP[outter_num].push_back(new fixRank(n[k],p[k],r[k],
                                     yTemp,retraction[k]));
            manifoldYB[outter_num].push_back(new fixRank(n[k],p[k],r[k],

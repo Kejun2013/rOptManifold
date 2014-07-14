@@ -23,14 +23,14 @@ SetRetraction=function(object){
                         Set to 'Norm' instead"))
          object@retraction[i]="Norm" 
        }
-    }else if(object@mtype[i]=="grassmanQ"){
-      if(!(retr %in% c("Exp"))){
+    }else if(object@mtype[i]=="grassmannQ"){
+      if(!(retr %in% c("exp","qr"))){
         cat(paste0("Component ",i,": ",object@mtype[i],
-                       " retraction should be 'Exp'. 
-                       Set to 'Exp' instead"))
-        object@retraction[i]="Exp" 
+                       " retraction should be one of 'QR', 'Exp'. 
+                       Set to 'QR' instead"))
+        object@retraction[i]="QR" 
       }
-    }else if(object@mtype[i]=="grassmanSub"){
+    }else if(object@mtype[i]=="grassmannSub"){
       if(!(retr %in% c("qr","cayley"))){
         cat(paste0("Component ",i,": ",object@mtype[i],
                        " retraction should be one of 'QR', 'Cayley'.
@@ -72,6 +72,20 @@ SetRetraction=function(object){
 }
 
 
+store_obj=function(){}
+store_grad=function(){}
+num_n=1
+num_p=1
+obj2grad=function(Y,k=0){
+  numericalGradient(store_obj,Y,num_n,num_p,k)
+}
+obj2hess=function(Y,Z,k=0){
+  numericalHessian(store_obj,Y,Z,num_n,num_p,k)
+}
+grad2hess=function(Y,Z,k=0){
+  numericalHessian2(store_grad,Y,Z,k)
+}
+
 
 
 
@@ -79,11 +93,19 @@ setGeneric("steepestDescent",function(object){standardGeneric("steepestDescent")
 setMethod("steepestDescent","manifold",
           definition=function(object){
             retractMethod=SetRetraction(object)
+            optUse_grad=object@grad
+            if(is.null(optUse_grad)){
+              assignInNamespace("store_obj",object@obj,"rOptManifold")
+              assignInNamespace("num_n",object@n,"rOptManifold")
+              assignInNamespace("num_p",object@p,"rOptManifold")
+              optUse_grad=obj2grad
+            }
+            
             .Call("steepestDescent",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,object@grad,
+                  object@obj,optUse_grad,
                   object@control,
                   PACKAGE = "rOptManifold" )
           })
@@ -94,11 +116,27 @@ setGeneric("trustRegion",function(object){standardGeneric("trustRegion")})
 setMethod("trustRegion","manifold",
           definition=function(object){
             retractMethod=SetRetraction(object)
+            optUse_grad=object@grad
+            assignInNamespace("store_obj",object@obj,"rOptManifold")
+            assignInNamespace("store_grad",object@grad,"rOptManifold")
+            assignInNamespace("num_n",object@n,"rOptManifold")
+            assignInNamespace("num_p",object@p,"rOptManifold")
+            if(is.null(optUse_grad)){
+              optUse_grad=obj2grad
+            }
+            optUse_hess=object@hessian
+            if(is.null(optUse_hess)){
+              if(is.null(object@grad)){
+                optUse_hess=obj2hess
+              }else{
+                optUse_hess=grad2hess
+              }
+            }
             .Call("trustRegion",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,object@grad,object@hessian,
+                  object@obj,optUse_grad,optUse_hess,
                   object@control,
                   PACKAGE = "rOptManifold" )
           })
@@ -109,13 +147,20 @@ setGeneric("conjugateGradient",function(object){standardGeneric("conjugateGradie
 setMethod("conjugateGradient","manifold",
           definition=function(object){
             retractMethod=SetRetraction(object)
+            optUse_grad=object@grad
+            if(is.null(optUse_grad)){
+              assignInNamespace("store_obj",object@obj,"rOptManifold")
+              assignInNamespace("num_n",object@n,"rOptManifold")
+              assignInNamespace("num_p",object@p,"rOptManifold")
+              optUse_grad=obj2grad
+            }
             .Call("conjugateGradient",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,object@grad,
+                  object@obj,optUse_grad,
                   object@control,
-                  PACKAGE = "rOptManifold" )
+                  PACKAGE = "rOptManifold")
           })
 
 ## Kejun just does not know how to write this one
@@ -129,5 +174,5 @@ setMethod("particleSwarm","manifold",
                   object@mtype,retractMethod, 
                   object@obj,
                   object@control,
-                  PACKAGE = "rOptManifold" )
+                  PACKAGE = "rOptManifold")
           })

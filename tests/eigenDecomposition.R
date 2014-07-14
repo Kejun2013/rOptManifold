@@ -26,7 +26,7 @@ problem["control","iterSubMax"]=1000
 problem["control","particleNum"]=10
 problem["control","conjMethod"]="FR"
 
-res=particleSwarm(problem)
+res=trustRegion(problem)
 -res$optValue
 
 res$NumIter

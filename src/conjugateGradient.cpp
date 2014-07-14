@@ -1,6 +1,7 @@
 //#include <omp.h>
 #include "stiefel.h"
 #include "grassmannQ.h"
+#include "grassmannSub.h"
 #include "fixRank.h"
 #include "fixRankPSD.h"
 #include "fixRankSym.h"
@@ -62,6 +63,9 @@ BEGIN_RCPP
      }
      else if(typeTemp=="grassmannQ"){
        manifoldY.push_back(new grassmannQ(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }else if(typeTemp=="grassmannSub"){
+       manifoldY.push_back(new grassmannSub(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }else if(typeTemp=="fixedRank"){
        manifoldY.push_back(new fixRank(n[k],p[k],r[k],

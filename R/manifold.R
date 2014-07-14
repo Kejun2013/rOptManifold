@@ -75,12 +75,13 @@ stiefel<-function(n,p,retraction="QR"){
 }
 
 
-grassmanQ<-function(n,p,retraction="Exp"){
+
+grassmannQ<-function(n,p,retraction="QR"){
   retraction=BasicCheck(n,p,NULL,retraction)
   if(any(n<p)) stop("N should not be smaller than P!")
 
   Y=lapply(1:length(n),function(iid){diag(1,n[iid],p[iid])})#initial value on manifold
-  mtype=rep("grassmanQ",length(n))
+  mtype=rep("grassmannQ",length(n))
   
   object=new("manifold",Y=Y,n=n,p=p,r=rep(0,length(n)),
       retraction=retraction,mtype=mtype)
@@ -88,6 +89,25 @@ grassmanQ<-function(n,p,retraction="Exp"){
   outputMessage(n,p,NULL,mtype)
   object
 }
+
+
+
+grassmannSub<-function(n,r,retraction="QR"){
+  retraction=BasicCheck(n,n,r,retraction)
+  
+  Y=lapply(1:length(n),function(iid){
+        temp=diag(1,n[iid],r[iid])
+        temp%*%t(temp)
+    })#initial value on manifold
+  mtype=rep("grassmannSub",length(n))
+  object=new("manifold",Y=Y,n=n,p=n,r=r,
+             retraction=retraction,mtype=mtype)
+  
+  outputMessage(n,n,r,mtype)
+  object
+}
+
+
 
 
 fixedRank<-function(n,p,r, retraction="Proj"){
