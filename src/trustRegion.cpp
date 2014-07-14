@@ -8,6 +8,8 @@
 #include "elliptope.h"
 #include "sphere.h"
 #include "oblique.h"
+#include "specialLinear.h"
+#include "projective.h"
 
 // YList is a (list of) of matrix(ces) of dimensional n1*p1, initial values
 //f1 is the objective function; f2 is the gradient function; f3 is the hessian function
@@ -78,6 +80,12 @@ BEGIN_RCPP
                                   yTemp,retraction[k]));
      }else if(typeTemp=="oblique"){
        manifoldY.push_back(new oblique(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }else if(typeTemp=="specialLinear"){
+       manifoldY.push_back(new specialLinear(n[k],p[k],r[k],
+                                  yTemp,retraction[k]));
+     }else if(typeTemp=="projective"){
+       manifoldY.push_back(new projective(n[k],p[k],r[k],
                                   yTemp,retraction[k]));
      }       
   }

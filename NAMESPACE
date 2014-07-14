@@ -23,4 +23,7 @@ export("fixedRank",
        "sphere",
        "grassmannQ",
        "grassmannSub",
-       "oblique")
+       "oblique",
+       "specialLinear",
+       "projective")
+

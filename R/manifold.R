@@ -197,3 +197,31 @@ oblique<-function(n,p,retraction="Norm"){
   outputMessage(n,p,NULL,mtype)
   object
 }
+
+#n*n and invertible, p=n, no "p" neeeded
+specialLinear<-function(n,retraction="Norm"){
+  retraction=BasicCheck(n,n,NULL,retraction)
+ # if(any(n!=p)) stop("N should not be equal to P!")
+  
+  Y=lapply(1:length(n),function(iid){diag(1,n[iid],n[iid])})#initial value on manifold
+  mtype=rep("special linear",length(n))
+  
+  object=new("manifold",Y=Y,n=n,p=n,r=n,
+             retraction=retraction,mtype=mtype)
+  #n=p
+  outputMessage(n,n,NULL,mtype)
+  object
+}
+
+projective<-function(n,p,retraction="Norm"){
+  retraction=BasicCheck(n,p,NULL,retraction)
+  Y=lapply(1:length(n),function(ii){
+    diag(1,n[ii],p[ii])
+  })#initial value on manifold
+  mtype=rep("projective",length(n))
+  
+  object=new("manifold",Y=Y,n=n,p=p,r=rep(0,length(n)),
+             retraction=retraction,mtype=mtype)
+  outputMessage(n,p,NULL,mtype)
+  object
+}
