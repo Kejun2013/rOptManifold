@@ -67,7 +67,7 @@ SetRetraction=function(object){
                    Set to 'Norm' instead"))
         object@retraction[i]="Norm" 
       }
-    }else if(object@mtype[i]=="Norm"){
+    }else if(object@mtype[i]=="projective"){
       if(!(retr %in% c("norm"))){
         cat(paste0("Component ",i,": ",object@mtype[i],
                    " retraction should be  'Norm'. 

@@ -5,6 +5,7 @@
 
 class projective: public manifold
 {
+
 public:
   projective(int, int, int, NumericMatrix,int);
   void evalGradient(arma::mat gradF,std::string method);  //evaluate the steepest descent direction;
@@ -18,6 +19,7 @@ public:
   void update_conjugateD(double);
   double metric(const arma::mat &X1,const arma::mat &X2);
   void set_particle();
+  arma::mat get_horizontal(const arma::mat &H);
 };
 
 #endif
