@@ -157,7 +157,7 @@ setMethod("trustRegion","manifold",
           })
 
 
-## Kejun just does not know how to write this one
+## Joke:Kejun just does not know how to write this one
 setGeneric("conjugateGradient",function(object){standardGeneric("conjugateGradient")})
 setMethod("conjugateGradient","manifold",
           definition=function(object){
@@ -178,7 +178,7 @@ setMethod("conjugateGradient","manifold",
                   PACKAGE = "rOptManifold")
           })
 
-## Kejun just does not know how to write this one
+## Joke: Kejun just does not know how to write this one
 setGeneric("particleSwarm",function(object){standardGeneric("particleSwarm")})
 setMethod("particleSwarm","manifold",
           definition=function(object){

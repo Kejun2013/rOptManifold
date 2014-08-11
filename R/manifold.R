@@ -204,7 +204,7 @@ specialLinear<-function(n,retraction="Norm"){
  # if(any(n!=p)) stop("N should not be equal to P!")
   
   Y=lapply(1:length(n),function(iid){diag(1,n[iid],n[iid])})#initial value on manifold
-  mtype=rep("special linear",length(n))
+  mtype=rep("specialLinear",length(n))
   
   object=new("manifold",Y=Y,n=n,p=n,r=n,
              retraction=retraction,mtype=mtype)

@@ -43,9 +43,13 @@ double specialLinear::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 //second argument unused
 arma::mat specialLinear::retract(double stepSize, std::string method, bool first){
   if(retraction==1){//Normalization  
-    double determ;
-    Yt=Y+stepSize*descD;
-    determ=arma::det(Yt);
+    double determ,t;
+    t=stepSize; 
+    do{
+      Yt=Y+t*descD;
+      determ=arma::det(Yt);
+      t=1.0/2*t;
+    }while(determ<0.0);
     Yt=Yt/(pow(determ,1.0/n));
   }else if(retraction==0){//Exponential
     // expm()
@@ -79,6 +83,7 @@ double specialLinear::metric(const arma::mat &X1,const arma::mat &X2){
 void specialLinear::set_particle(){
   arma::mat y_temp=arma::randn(n,p);
   double determ=arma::det(y_temp);
+  if(determ<0.0) y_temp.col(1)=-y_temp.col(1);
   Y=y_temp/(pow(determ,1.0/n));
   
   arma::mat velocity_temp=arma::randn(n,p);
