@@ -11,7 +11,7 @@ public:
   stiefel(int, int, int, NumericMatrix,int);
   void evalGradient(arma::mat gradF,std::string method);  //evaluate the steepest descent direction;
   //double evalObjective(); // evaluate objective
-  arma::mat retract(double stepSize,std::string method, bool first);
+  arma::mat retract(double stepSize,std::string method, bool first, Function expm);
   double evalHessian(const arma::mat &H,const arma::mat &Z);
 
   // new added

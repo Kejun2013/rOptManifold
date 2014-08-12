@@ -10,7 +10,7 @@ class fixRankPSD: public manifold
 public:
   fixRankPSD(int, int, int, NumericMatrix,int);
   void evalGradient(arma::mat gradF,std::string method);  //evaluate the steepest descent direction;
-  arma::mat retract(double stepSize,std::string,bool first);
+  arma::mat retract(double stepSize,std::string,bool first, Function expm);
   double evalHessian(const arma::mat &H,const arma::mat &Z);
 //  virtual void set_descD(arma::mat );
   void vectorTrans();

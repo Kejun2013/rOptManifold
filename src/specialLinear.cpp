@@ -41,7 +41,7 @@ double specialLinear::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 
 
 //second argument unused
-arma::mat specialLinear::retract(double stepSize, std::string method, bool first){
+arma::mat specialLinear::retract(double stepSize, std::string method, bool first, Function expm){
   if(retraction==1){//Normalization  
     double determ,t;
     t=stepSize; 

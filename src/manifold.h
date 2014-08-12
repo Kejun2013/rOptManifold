@@ -35,7 +35,7 @@ public:
   virtual void evalGradient(arma::mat gradF, std::string) =0;  
   
   //retraction with certain stepsize
-  virtual arma::mat retract(double stepSize, std::string,bool) =0;
+  virtual arma::mat retract(double stepSize, std::string,bool, Function expm) =0;
   
   //evalHessian: Hessian operator on Z at current Y, H is the ordinary hessian
   //            return inner prodcut <Z,Hessian*Z>_Y

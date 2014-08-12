@@ -37,7 +37,7 @@ double projective::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 
 
 //second argument unused
-arma::mat projective::retract(double stepSize, std::string method, bool first){
+arma::mat projective::retract(double stepSize, std::string method, bool first, Function expm){
   Yt=Y+stepSize*descD;
 
   return Yt;

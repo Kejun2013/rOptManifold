@@ -35,7 +35,7 @@ double sphere::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 
 
 //second argument unused
-arma::mat sphere::retract(double stepSize, std::string method, bool first){
+arma::mat sphere::retract(double stepSize, std::string method, bool first, Function expm){
   if(retraction==1){//Normalization  //?How to change in setMethod, add "nor=1"?
     Yt=Y+stepSize*descD;
     Yt=Yt/arma::norm(Yt,"fro");

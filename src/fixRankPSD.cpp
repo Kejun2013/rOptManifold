@@ -39,7 +39,7 @@ double fixRankPSD::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 //rectract with step size
 //first used to avoid computation repetition
 arma::mat fixRankPSD::retract(double stepSize, std::string method,
-                  bool first){
+                  bool first, Function expm){
   Yt=Y+stepSize*descD;
   return Yt;
 }

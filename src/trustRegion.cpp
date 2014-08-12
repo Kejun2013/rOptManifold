@@ -20,13 +20,14 @@
 
 RcppExport SEXP  trustRegion(SEXP YList1, SEXP n1, SEXP p1, SEXP r1,
                       SEXP mtype1,SEXP retraction1,
-                      SEXP f1, SEXP f2,SEXP f3,
+                      SEXP f1, SEXP f2,SEXP f3,SEXP expm1,
                       SEXP control1){
 BEGIN_RCPP
   //Initialization of functions and control parameters
   Function obej(f1);
   Function grad(f2);
   Function hessian(f3);
+  Function expm(expm1);
   List control(control1);
   IntegerVector retraction(retraction1);
   int iterMax=as< int>(control["iterMax"]);
@@ -189,7 +190,7 @@ BEGIN_RCPP
         m_temp=manifoldY[k]->secondOrderApprox(objValue,eta,hessianF);
 
         manifoldY[k]->set_descD(eta);
-       YList[k]=manifoldY[k]->retract(1,"trustRegion",true);
+       YList[k]=manifoldY[k]->retract(1,"trustRegion",true,expm);
         if(prodK>1){
           objValue_temp=as< double>(obej(YList));
         }else{

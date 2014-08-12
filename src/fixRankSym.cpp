@@ -73,7 +73,8 @@ double fixRankSym::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 //second argument unused
 //rectract with step size
 //first used to avoid computation repetition
-arma::mat fixRankSym::retract(double stepSize, std::string method,bool first){
+arma::mat fixRankSym::retract(double stepSize, std::string method,
+        bool first, Function expm){
   arma::mat S,Vs,Us;
   arma::vec Sigma_s;
   if(first){
