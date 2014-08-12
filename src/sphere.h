@@ -1,7 +1,7 @@
 #ifndef SPHERE_CLASS
 #define SPHERE_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 class sphere: public manifold
 {

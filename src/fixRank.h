@@ -1,7 +1,7 @@
 #ifndef FIXRANK_CLASS
 #define FIXRANK_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 //quotient version of grassmann manifold
 

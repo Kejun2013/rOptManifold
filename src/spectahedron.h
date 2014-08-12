@@ -1,7 +1,7 @@
 #ifndef SPECTAHEDRON_CLASS
 #define SPECTAHEDRON_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 //quotient version of grassmann manifold
 

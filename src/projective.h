@@ -1,7 +1,7 @@
 #ifndef PROJECTIVE_CLASS
 #define PROJECTIVE_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 class projective: public manifold
 {

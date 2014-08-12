@@ -1,7 +1,7 @@
 #ifndef OBLIQUE_CLASS
 #define OBLIQUE_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 class oblique: public manifold
 {

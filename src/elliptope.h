@@ -1,7 +1,7 @@
 #ifndef ELLIPTOPE_CLASS
 #define ELLIPTOPE_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 //quotient version of grassmann manifold
 

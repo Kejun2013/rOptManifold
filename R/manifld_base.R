@@ -90,8 +90,8 @@ setMethod("*",signature(e1="manifold",e2="manifold"),
 setGeneric("checkGradient",function(object){standardGeneric("checkGradient")})
 setMethod("checkGradient","manifold",
           definition=function(object){
-            if(is.null(object@obj)) steop("The objective function cound not be NULL.")
-            if(is.null(object@grad)) steop("The gradient function cound not be NULL.")
+            if(is.null(object@obj)) stop("The objective function cound not be NULL.")
+            if(is.null(object@grad)) stop("The gradient function cound not be NULL.")
             checkGradient2(object)
           })
 

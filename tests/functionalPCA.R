@@ -62,7 +62,7 @@ gradF=function(Sigma){
     temp=temp+t(bSample[[ii]])%*%(-ySample[[ii]]%*%t(ySample[[ii]])+
                       bSample[[ii]]%*%Sigma%*%t(bSample[[ii]]))%*%bSample[[ii]]
   }
-  temp=2*temp+Omega*lambda
+  temp=-2*temp+Omega*lambda
   #objF(Sigma-0.001*temp)
   temp
 }
@@ -92,7 +92,7 @@ problem["control","tol"]=0.1
 problem["control","Delta0"]=0.5
 problem["control","DeltaMax"]=10
 problem["control","rhoMin"]=0.2
-problem["control","iterMax"]=100
+problem["control","iterMax"]=50
 problem["control","iterSubMax"]=300
 problem["control","conjMethod"]="PR"
 lambda=100
@@ -100,7 +100,7 @@ problem["control","alpha"]=10
 problem["control","beta"]=0.8
 problem["control","sigma"]=0.6
 res=trustRegion(problem)
-#res=steepestDescent(problem)
+res=steepestDescent(problem)
 #res=conjugateGradient(problem)
 
 

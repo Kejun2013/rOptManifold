@@ -1,4 +1,4 @@
-#include <omp.h>
+//#include <omp.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -53,7 +53,7 @@ BEGIN_RCPP
   int k;
   List YList(YList1), YList_temp(YList1);
   
-  omp_set_num_threads(thread_num);
+//  omp_set_num_threads(thread_num);
 
 //  int dim=0;
 //  for(k=0;k<prodK;k++) dim+=n[k]+p[k];
@@ -72,7 +72,7 @@ BEGIN_RCPP
 
  //initiating particle_num size of particles and velocities;
   int outter_num;
-  #pragma omp parallel for schedule(static) private(k) shared(manifoldYB, manifoldYG,manifoldYP,prodK)
+//  #pragma omp parallel for schedule(static) private(k) shared(manifoldYB, manifoldYG,manifoldYP,prodK)
   for(outter_num=0;outter_num<particle_num;outter_num++){
     for(k=0;k<prodK;k++){
       SEXP yTemp2=YList[k];
@@ -224,9 +224,9 @@ BEGIN_RCPP
        private(R01,R02,k) 
 { 
  
-      #pragma omp for schedule(static)
+//      #pragma omp for schedule(static)
         for(outter_num=0;outter_num<particle_num;outter_num++){
-          srand(int(time(NULL)) ^ omp_get_thread_num());
+          srand(int(time(NULL)));// ^ omp_get_thread_num());
          //  List YList_parallel(prodK);
            
            //begin updating each component

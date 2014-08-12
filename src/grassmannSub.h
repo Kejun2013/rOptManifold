@@ -1,7 +1,7 @@
 #ifndef GRASSMANSUB_CLASS
 #define GRASSMANSUB_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 //quotient version of grassmann manifold
 

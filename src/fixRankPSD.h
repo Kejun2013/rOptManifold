@@ -1,7 +1,7 @@
 #ifndef FIXRANKPSD_CLASS
 #define FIXRANKPSD_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 //quotient version of grassmann manifold
 

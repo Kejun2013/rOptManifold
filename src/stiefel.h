@@ -1,7 +1,7 @@
 #ifndef STIEFEL_CLASS
 #define STIEFEL_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 class stiefel: public manifold
 {

@@ -1,7 +1,7 @@
 #ifndef SPECIALLINEAR_CLASS
 #define SPECIALLINEAR_CLASS
 
-#include <manifold.h>
+#include "manifold.h"
 
 class specialLinear: public manifold
 {
