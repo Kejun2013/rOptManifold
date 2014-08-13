@@ -6,7 +6,8 @@ specialLinear::specialLinear(int n1, int p1, int r1,
 
 
 void specialLinear::evalGradient(arma::mat gradF,std::string method){
-    double temp=1.0/n*(arma::dot(gradF.t(),Y.i()));
+    arma::mat YU=gradF*Y.i();
+    double temp=1.0/n*(arma::trace(YU));
     xi_normal=temp*Y;
     xi=gradF-xi_normal;   
     if(method=="steepest"){
@@ -52,7 +53,13 @@ arma::mat specialLinear::retract(double stepSize, std::string method, bool first
     }while(determ<0.0);
     Yt=Yt/(pow(determ,1.0/n));
   }else if(retraction==0){//Exponential
-    // expm()
+    arma::mat temp,temp1,temp2,exp1,exp2;
+    temp=descD*(Y.i());
+    temp1=(temp.t())*stepSize;
+    temp2=temp-temp1;
+    exp1=as< arma::mat>(expm(temp1));
+    exp2=as< arma::mat>(expm(temp2));
+    Yt=exp1*exp2*Y;
   }
   return Yt;
 }

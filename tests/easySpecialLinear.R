@@ -30,7 +30,7 @@ problem["hessian"]=function(X,Z){
   2*Z%*%D%*%t(D)
 }
 
-problem["retraction"]="Norm"
+problem["retraction"]="Exp"
 problem["control","tol"]=0.01
 problem["control","Delta0"]=3
 problem["control","DeltaMax"]=10
@@ -47,6 +47,8 @@ problem["control","phi2"]=0.8
 
 steepestDescent(problem)
 Y=problem@Y[[1]]
-H=problem["grad"](Y)
-H=H-1/4*sum(diag(H%*%solve(Y)))*Y
-sum(diag(H%*%solve(Y)))
+det(Y) #should be 1
+
+#H=problem["grad"](Y)
+#H=H-1/4*sum(diag(H%*%solve(Y)))*Y
+#sum(diag(H%*%solve(Y)))
