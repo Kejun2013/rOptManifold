@@ -57,9 +57,9 @@ arma::mat specialLinear::retract(double stepSize, std::string method, bool first
     temp=descD*(Y.i());
     temp1=(temp.t())*stepSize;
     temp2=temp-temp1;
-    exp1=as< arma::mat>(expm(temp1));
+    exp1=as< arma::mat>(expm(temp1)); //det(expm(x))=exp(tr(x))=exp(0)=1, if tr(x)=0
     exp2=as< arma::mat>(expm(temp2));
-    Yt=exp1*exp2*Y;
+    Yt=exp1*exp2*Y; // det(Yt)=1*1*1=1; but not true in test. 
   }
   return Yt;
 }
