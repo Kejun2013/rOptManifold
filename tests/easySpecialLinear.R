@@ -30,14 +30,14 @@ problem["hessian"]=function(X,Z){
   2*Z%*%D%*%t(D)
 }
 
-problem["retraction"]="Exp"
-problem["control","tol"]=0.01
+problem["retraction"]="Norm"
+problem["control","tol"]=0.00001
 problem["control","Delta0"]=3
 problem["control","DeltaMax"]=10
 problem["control","rhoMin"]=0.01
 problem["control","iterMax"]=1000
 problem["control","alpha"]=3
-problem["control","iterSubMax"]=1000
+problem["control","iterSubMax"]=100
 problem["control","conjMethod"]="PR"
 problem["control","threadNum"]=1
 problem["control","particleNum"]=200
@@ -45,10 +45,11 @@ problem["control","omega"]=0.8
 problem["control","phi1"]=0.2
 problem["control","phi2"]=0.8
 
-steepestDescent(problem)
+res=steepestDescent(problem)
 Y=problem@Y[[1]]
 det(Y) #should be 1
 
-#H=problem["grad"](Y)
-#H=H-1/4*sum(diag(H%*%solve(Y)))*Y
-#sum(diag(H%*%solve(Y)))
+H=problem["grad"](Y)
+H=H-1/4*sum(diag(H%*%solve(Y)))*Y
+sum(diag(H%*%solve(Y))) #should be 0 if correct 
+res$optValue   # should be very close to zero if correct

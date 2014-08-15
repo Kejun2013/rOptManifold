@@ -199,7 +199,7 @@ oblique<-function(n,p,retraction="Norm"){
 }
 
 #n*n and invertible, p=n, no "p" neeeded
-specialLinear<-function(n,retraction="Exp"){
+specialLinear<-function(n,retraction="Norm"){
   retraction=BasicCheck(n,n,NULL,retraction)
  # if(any(n!=p)) stop("N should not be equal to P!")
   

@@ -65,7 +65,7 @@ SetRetraction=function(object){
         cat(paste0("Component ",i,": ",object@mtype[i],
                    " retraction should be one of 'Exp', 'Norm'. 
                    Set to 'Norm' instead"))
-        object@retraction[i]="Exp" 
+        object@retraction[i]="Norm" 
       }
     }else if(object@mtype[i]=="projective"){
       if(!(retr %in% c("norm"))){
@@ -100,7 +100,6 @@ obj2hess=function(Y,Z,k=0){
 grad2hess=function(Y,Z,k=0){
   numericalHessian2(store_grad,Y,Z,k)
 }
-
 
 
 
