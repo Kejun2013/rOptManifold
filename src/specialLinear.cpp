@@ -52,7 +52,8 @@ arma::mat specialLinear::retract(double stepSize, std::string method, bool first
     }while(determ<0.0);
     Yt=Yt/(pow(determ,1.0/n));
   }else if(retraction==0){//Exponential
-    // expm()
+       Yt=Y+stepSize*descD;
+       expm(Yt);
   }
   return Yt;
 }
