@@ -103,7 +103,6 @@ grad2hess=function(Y,Z,k=0){
 
 
 
-
 setGeneric("steepestDescent",function(object){standardGeneric("steepestDescent")})
 setMethod("steepestDescent","manifold",
           definition=function(object){
