@@ -42,7 +42,7 @@ double specialLinear::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 
 
 //second argument unused
-arma::mat specialLinear::retract(double stepSize, std::string method, bool first, Function expm){
+arma::mat specialLinear::retract(double stepSize, std::string method, bool first){
   if(retraction==1){//Normalization  
     double determ,t;
     t=stepSize; 
@@ -53,18 +53,15 @@ arma::mat specialLinear::retract(double stepSize, std::string method, bool first
     }while(determ<0.0);
     Yt=Yt/(pow(determ,1.0/n));
   }else if(retraction==0){//Exponential
-<<<<<<< HEAD
-       Yt=Y+stepSize*descD;
-       expm(Yt);
-=======
-    arma::mat temp,temp1,temp2,exp1,exp2;
-    temp=descD*(Y.i());
-    temp1=(temp.t())*stepSize;
-    temp2=temp-temp1;
-    exp1=as< arma::mat>(expm(temp1)); //det(expm(x))=exp(tr(x))=exp(0)=1, if tr(x)=0
-    exp2=as< arma::mat>(expm(temp2));
-    Yt=exp1*exp2*Y; // det(Yt)=1*1*1=1; but not true in test.
->>>>>>> FETCH_HEAD
+      //Yt=Y+stepSize*descD;
+      // expm(Yt);
+      // arma::mat temp,temp1,temp2,exp1,exp2;
+      //temp=descD*(Y.i());
+      //temp1=(temp.t())*stepSize;
+      //temp2=temp-temp1;
+      //exp1=as< arma::mat>(expm(temp1)); //det(expm(x))=exp(tr(x))=exp(0)=1, if tr(x)=0
+      //exp2=as< arma::mat>(expm(temp2));
+      //Yt=exp1*exp2*Y; // det(Yt)=1*1*1=1; but not true in test.
   }
   return Yt;
 }

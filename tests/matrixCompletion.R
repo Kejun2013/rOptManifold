@@ -1,14 +1,16 @@
 set.seed(104)
-U=matrix(runif(60),ncol=3)
-V=matrix(runif(57),ncol=3)
+m = 60
+n = 57
+U=matrix(runif(m*3),ncol=3)
+V=matrix(runif(n*3),ncol=3)
 sigma=diag(c(1,1,1))
 lowR=U%*%sigma%*%t(V)
 
-mask=matrix(runif(20*19)>0.3,ncol=19)
+mask=matrix(runif(m*n)>0.3,ncol=n)
 sum(mask)
 
 
-problem=fixedRank(20,19,3)
+problem=fixedRank(m,n,3)
 problem["obj"]=function(X){
   temp=0.5*(lowR-X)^2
   sum(temp[mask])

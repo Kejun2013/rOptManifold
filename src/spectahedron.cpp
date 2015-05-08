@@ -47,7 +47,7 @@ double spectahedron::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 //rectract with step size
 //first used to avoid computation repetition
 arma::mat spectahedron::retract(double stepSize, std::string method,
-                  bool first, Function expm){
+                  bool first){
   if(retraction==0){//exponential
     if(first){
       retract_a=arma::norm(descD,"fro");

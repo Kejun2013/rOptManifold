@@ -11,7 +11,7 @@ public:
   specialLinear(int, int, int, NumericMatrix,int);
   void evalGradient(arma::mat gradF,std::string method);  //evaluate the tangent vecotors;
   //double evalObjective(); // evaluate objective
-  arma::mat retract(double stepSize,std::string method, bool first, Function expm);
+  arma::mat retract(double stepSize,std::string method, bool first);
   double evalHessian(const arma::mat &H,const arma::mat &Z);
 
   // new added

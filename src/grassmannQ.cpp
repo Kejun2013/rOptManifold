@@ -14,7 +14,7 @@ void grassmannQ::evalGradient(arma::mat gradF, std::string method){
 
 
 
-arma::mat grassmannQ::retract(double stepSize, std::string method,bool first, Function expm){
+arma::mat grassmannQ::retract(double stepSize, std::string method,bool first){
   if(retraction==1){ //QR
         Yt=Y+stepSize*descD;
     arma::qr_econ(retract_U,retract_V,Yt);

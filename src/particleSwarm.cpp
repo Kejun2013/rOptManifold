@@ -27,12 +27,11 @@
 
 RcppExport SEXP  particleSwarm(SEXP YList1, SEXP n1, SEXP p1, SEXP r1,
                       SEXP mtype1,SEXP retraction1,
-                      SEXP f1, SEXP expm1,
+                      SEXP f1,
                       SEXP control1){
 BEGIN_RCPP
   //Initialization of functions and control parameters
   Function obej(f1);
-  Function expm(expm1);
   List control(control1);
   IntegerVector retraction(retraction1);
   int iterMax=as< int>(control["iterMax"]);
@@ -245,7 +244,7 @@ BEGIN_RCPP
 			        //project onto tangent space
               manifoldYP[outter_num][k]->evalGradient(velocity,"particleSwarm");
              //Rcpp::Rcout<<2<<endl;
-              manifoldYP[outter_num][k]->retract(1,"particleSwarm",true,expm);
+              manifoldYP[outter_num][k]->retract(1,"particleSwarm",true);
               //Rcpp::Rcout<<3<<endl;
               manifoldYP[outter_num][k]->vectorTrans();
               //Rcpp::Rcout<<4<<endl;

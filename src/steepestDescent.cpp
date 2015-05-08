@@ -20,13 +20,12 @@
 
 RcppExport SEXP  steepestDescent(SEXP YList1, SEXP n1, SEXP p1, SEXP r1,
                       SEXP mtype1,SEXP retraction1,
-                      SEXP f1, SEXP f2,SEXP expm1,
+                      SEXP f1, SEXP f2,
                       SEXP control1){
 BEGIN_RCPP
   //Initialization of functions and control parameters
   Function obej(f1);
   Function grad(f2);
-  Function expm(expm1);
   List control(control1);
   IntegerVector retraction(retraction1);
   int iterMax=as< int>(control["iterMax"]);
@@ -128,7 +127,7 @@ BEGIN_RCPP
           iterInner++;
           stepsize=stepsize*beta;
           eDescent=eDescent*beta;
-          YList[k]=manifoldY[k]->retract(stepsize,"steepest",first,expm);
+          YList[k]=manifoldY[k]->retract(stepsize,"steepest",first);
           if(prodK>1){
             objValue_temp=as< double>(obej(YList));
           }else{

@@ -119,7 +119,7 @@ setMethod("steepestDescent","manifold",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,optUse_grad,expm,
+                  object@obj,optUse_grad,
                   object@control,
                   PACKAGE = "rOptManifold" )
           })
@@ -150,7 +150,7 @@ setMethod("trustRegion","manifold",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,optUse_grad,optUse_hess,expm,
+                  object@obj,optUse_grad,optUse_hess,
                   object@control,
                   PACKAGE = "rOptManifold" )
           })
@@ -172,7 +172,7 @@ setMethod("conjugateGradient","manifold",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,optUse_grad,expm,
+                  object@obj,optUse_grad,
                   object@control,
                   PACKAGE = "rOptManifold")
           })
@@ -186,7 +186,7 @@ setMethod("particleSwarm","manifold",
                   object@Y,
                   object@n,object@p,object@r,
                   object@mtype,retractMethod, 
-                  object@obj,expm,
+                  object@obj,
                   object@control,
                   PACKAGE = "rOptManifold")
           })

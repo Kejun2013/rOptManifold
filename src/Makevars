@@ -2,12 +2,12 @@
 PKG_LIBS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 
 ## -- compiling for OpenMP 
-PKG_CXXFLAGS=-fopenmp
+#PKG_CXXFLAGS=-fopenmp
 ##
 ## -- linking for OpenMP
-PKG_LIBS= -fopenmp -lgomp
+#PKG_LIBS= -fopenmp -lgomp
 
-PKG_CFLAGS=-fopenmp
+#PKG_CFLAGS=-fopenmp
 
-PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
-PKG_LIBS = $(SHLIB_OPENMP_CFLAGS)
+#PKG_CFLAGS = $(SHLIB_OPENMP_CFLAGS)
+#PKG_LIBS = $(SHLIB_OPENMP_CFLAGS)

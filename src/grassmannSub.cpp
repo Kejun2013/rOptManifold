@@ -15,7 +15,7 @@ void grassmannSub::evalGradient(arma::mat gradF, std::string method){
 
 
 
-arma::mat grassmannSub::retract(double stepSize, std::string method,bool first, Function expm){
+arma::mat grassmannSub::retract(double stepSize, std::string method,bool first){
   if(first){
       xiP=descD*Y-Y*descD;
   }

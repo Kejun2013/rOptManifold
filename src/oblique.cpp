@@ -38,7 +38,7 @@ double oblique::evalHessian(const arma::mat & eucH,const arma::mat & Z){
 
 
 //second argument unused
-arma::mat oblique::retract(double stepSize, std::string method, bool first, Function expm){
+arma::mat oblique::retract(double stepSize, std::string method, bool first){
   Yt=Y+stepSize*descD;
   arma::mat temp, divisor=arma::eye(p,p);
   int k;

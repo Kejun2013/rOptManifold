@@ -14,7 +14,7 @@ public:
   grassmannSub(int, int, int, NumericMatrix,int);
   void evalGradient(arma::mat gradF,std::string method);  //evaluate the steepest descent direction;
   //double evalObjective(); // evaluate objective
-  arma::mat retract(double stepSize,std::string,bool, Function expm);
+  arma::mat retract(double stepSize,std::string,bool);
   double evalHessian(const arma::mat &H,const arma::mat &Z);
   
   //New added
